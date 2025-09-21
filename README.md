@@ -18,4 +18,5 @@ pip install flask
 sqlite3 database.db < schema.sql
 
 Sovellus käynnistyy komennolla:
+
 flask run
