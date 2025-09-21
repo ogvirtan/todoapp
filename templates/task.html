@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>todo-list item</title>
+</head>
+
+<body>
+  <h1>{{ task.task }}</h1>
+  <h3>Taskin kuvaus: </h3>
+  <p> {{ task.body }} </p>
+  {% if task.tila == 0 %}
+  <a href="/markdone/{{ task.id }}">Merkitse tehdyksi</a>
+  <br/>
+  <br/>
+  {% else %}
+  <p>Taski suoritettu</p>
+  {% endif %}
+  <a href="/edit/{{ task.id }}">Muokkaa</a>
+  <a href="/remove/{{ task.id }}">Poista</a>
+  <br/>
+  <br/>
+  <a href="/">Takaisin etusivulle</a>
+  <a href="/createtask">Luo uusi taski</a>
+</body>
+
+</html>

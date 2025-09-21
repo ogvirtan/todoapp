@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Taskin lisäys</title>
+</head>
+
+<body>
+    <h1>Luo uusi taski todo-listalle</h1>
+  <form action="/addnewtask" method="post">
+    <p>
+      Taskin otsikko: <br />
+      <input type="text" name="task" />
+    </p>
+    <p>
+      Taskin sisältö: <br />
+      <textarea name="body" rows="3" cols="50"></textarea>
+    </p>
+    <input type="submit" value="Lisää tehtävälistalle" />
+  </form>
+  
+</body>
+
+</html>
