@@ -10,15 +10,16 @@
   <form action="/addnewtask" method="post">
     <p>
       Taskin otsikko: <br />
-      <input type="text" name="task" />
+      <input type="text" name="task" required/>
     </p>
     <p>
       Taskin sisältö: <br />
-      <textarea name="body" rows="3" cols="50"></textarea>
+      <textarea name="body" rows="3" cols="50" required></textarea>
     </p>
     <input type="submit" value="Lisää tehtävälistalle" />
   </form>
-  
+  <br/>
+  <a href="/">Etusivulle</a> 
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import render_template, redirect, request, session
+from flask import render_template, redirect, request, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
@@ -23,15 +23,18 @@ def create():
     password1 = request.form["password1"]
     password2 = request.form["password2"]
     if password1 != password2:
-        return "VIRHE: salasanat eivät ole samat"
+        flash("VIRHE: salasanat eivät ole samat")
+        return redirect("/register")
     password_hash = generate_password_hash(password1)
 
     try:
         forum.add_user(username, password_hash)
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
+        flash("VIRHE: tunnus on jo varattu")
+        return redirect("/register")
 
-    return redirect("/")
+    flash("Tunnus luotu!")
+    return redirect("/loginform")
 
 @app.route("/loginform")
 def loginform():
@@ -48,7 +51,8 @@ def login():
         session["username"] = username
         return redirect("/")
     else:
-        return "VIRHE: väärä tunnus tai salasana"
+        flash("VIRHE: väärä tunnus tai salasana")
+        return redirect("/loginform")
 
 @app.route("/logout")
 def logout():
@@ -63,7 +67,8 @@ def createtask():
 def addnewtask():
     task = request.form["task"]
     if len(task) == 0:
-        return "VIRHE: taskin otsikko ei voi olla tyhjä"
+        flash("VIRHE: taskin otsikko ei voi olla tyhjä")
+        redirect("/createtask")
     body = request.form["body"]
     result = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0]
     user_id = result["id"]     

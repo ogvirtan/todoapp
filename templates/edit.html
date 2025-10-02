@@ -1,7 +1,7 @@
   <form action="/edit/{{ task.id }}" method="post">
     <p>
       Taskin sisältö:<br />
-      <textarea name="body" rows="5" cols="40">{{ task.body }}</textarea>
+      <textarea name="body" rows="5" cols="40" required>{{ task.body }}</textarea>
     </p>
     <input type="submit" value="Lähetä" />
   </form>

@@ -6,17 +6,26 @@
 </head>
 
 <body>
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{ message }}</b>
+  </p>
+  {% endfor %}
   <form action="/login" method="post">
     <p>
       Tunnus: <br />
-      <input type="text" name="username" />
+      <input type="text" name="username" required/>
     </p>
     <p>
       Salasana: <br />
-      <input type="password" name="password" />
+      <input type="password" name="password" required/>
     </p>
     <input type="submit" value="Kirjaudu" />
   </form>
+  <br/>
+  <a href="/">Etusivulle</a> 
+  <br/>
+  <a href="/register">Luo tunnus</a> 
 </body>
 
 </html>
