@@ -57,15 +57,18 @@ def login():
 
 @app.route("/logout")
 def logout():
+    require_login()
     del session["username"]
     return redirect("/")
 
 @app.route("/createtask")
 def createtask():
+    require_login()
     return render_template("createtask.html")
 
 @app.route("/addnewtask", methods = ["POST"])
 def addnewtask():
+    require_login()
     task = request.form["task"]
     if len(task) == 0:
         flash("VIRHE: taskin otsikko ei voi olla tyhjä")
@@ -78,6 +81,7 @@ def addnewtask():
 
 @app.route("/task/<int:task_id>")
 def show_task(task_id):
+    require_login()
     task = forum.get_task(task_id)
     if not task:
         abort(404)
@@ -85,6 +89,7 @@ def show_task(task_id):
 
 @app.route("/edit/<int:task_id>", methods=["GET", "POST"])
 def edit_task(task_id):
+    require_login()
     task = forum.get_task(task_id)
     if not task:
         abort(404)
@@ -106,6 +111,7 @@ def edit_task(task_id):
         
 @app.route("/remove/<int:task_id>", methods=["GET"])
 def remove_task(task_id):
+    require_login()
     task = forum.get_task(task_id)
     if not task:
         abort(404)
@@ -121,6 +127,7 @@ def remove_task(task_id):
 
 @app.route("/markdone/<int:task_id>", methods=["GET"])
 def mark_done(task_id):
+    require_login()
     task = forum.get_task(task_id)
     if not task:
         abort(404)
@@ -136,12 +143,14 @@ def mark_done(task_id):
 
 @app.route("/search")
 def search():
+    require_login()
     query = request.args.get("query")
     results = forum.search(query) if query else []
     return render_template("search.html", query=query, results=results)
 
 @app.route("/todolist")
 def todolist():
+    require_login()
     user_id = forum.get_user_id(session["username"]) 
     tasks = forum.get_task_by_user(user_id)
     return render_template("todolist.html",tasks=tasks)
@@ -151,3 +160,7 @@ def show_lines(content):
     content = str(markupsafe.escape(content))
     content = content.replace("\n", "<br />")
     return markupsafe.Markup(content)
+
+def require_login():
+    if "username" not in session:
+        abort(403)
