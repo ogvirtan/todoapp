@@ -36,11 +36,5 @@ def remove_task(task_id):
     db.execute(sql, [task_id])
 
 def search(query):
-    sql = """SELECT t.task,
-                    t.body,
-                    t.id,
-                    u.username
-             FROM tasks t, users u
-             WHERE u.id = t.user_id AND
-                   t.body LIKE ?"""
+    sql = "SELECT task FROM tasks WHERE task LIKE ?"
     return db.query(sql, ["%" + query + "%"])
