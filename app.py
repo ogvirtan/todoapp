@@ -71,8 +71,7 @@ def addnewtask():
         flash("VIRHE: taskin otsikko ei voi olla tyhjä")
         redirect("/createtask")
     body = request.form["body"]
-    result = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0]
-    user_id = result["id"]     
+    user_id = forum.get_user_id(session["username"]) 
     forum.add_task(task, body, user_id)
     task_id = db.last_insert_id()
     return redirect("/task/" + str(task_id))
@@ -114,8 +113,7 @@ def search():
 
 @app.route("/todolist")
 def todolist():
-    result = db.query("SELECT id FROM users WHERE username = ?", [session["username"]])[0]
-    user_id = result["id"]
+    user_id = forum.get_user_id(session["username"]) 
     tasks = forum.get_task_by_user(user_id)
     return render_template("todolist.html",tasks=tasks)
 
