@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import render_template, redirect, request, session, flash
+from flask import render_template, redirect, request, session, flash, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
@@ -84,6 +84,9 @@ def show_task(task_id):
 @app.route("/edit/<int:task_id>", methods=["GET", "POST"])
 def edit_task(task_id):
     task = forum.get_task(task_id)
+    user_id = forum.get_user_id(session["username"])
+    if task["user_id"] != user_id:
+        abort(403)
 
     if request.method == "GET":
         return render_template("edit.html", task=task)
@@ -96,12 +99,20 @@ def edit_task(task_id):
 @app.route("/remove/<int:task_id>", methods=["GET"])
 def remove_task(task_id):
     task = forum.get_task(task_id)
+    user_id = forum.get_user_id(session["username"])
+    if task["user_id"] != user_id:
+        abort(403)
+
     forum.remove_task(task["id"])
     return redirect("/todolist")
 
 @app.route("/markdone/<int:task_id>", methods=["GET"])
 def mark_done(task_id):
     task = forum.get_task(task_id)
+    user_id = forum.get_user_id(session["username"])
+    if task["user_id"] != user_id:
+        abort(403)
+        
     forum.mark_task_done(task["id"])
     return redirect("/task/" + str(task_id))
 
