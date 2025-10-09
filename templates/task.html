@@ -8,7 +8,7 @@
 <body>
   <h1>{{ task.task }}</h1>
   <h3>Taskin kuvaus: </h3>
-  <p> {{ task.body }} </p>
+  <p> {{ task.body | show_lines }} </p>
   {% if task.tila == 0 %}
   <a href="/markdone/{{ task.id }}">Merkitse tehdyksi</a>
   <br/>

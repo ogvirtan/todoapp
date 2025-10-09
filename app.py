@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
 import forum
+import markupsafe
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -117,3 +118,9 @@ def todolist():
     user_id = result["id"]
     tasks = forum.get_task_by_user(user_id)
     return render_template("todolist.html",tasks=tasks)
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
