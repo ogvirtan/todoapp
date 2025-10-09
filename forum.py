@@ -13,7 +13,8 @@ def add_user(username, password_hash):
     
 def get_task(task_id):
     sql = "SELECT * FROM tasks WHERE id = ?"
-    return db.query(sql, [task_id])[0]
+    result = db.query(sql, [task_id])
+    return result[0] if result else None
 
 def get_task_by_user(user_id):
     sql = "SELECT * FROM tasks WHERE user_id = ?"

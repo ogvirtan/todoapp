@@ -79,11 +79,15 @@ def addnewtask():
 @app.route("/task/<int:task_id>")
 def show_task(task_id):
     task = forum.get_task(task_id)
+    if not task:
+        abort(404)
     return render_template("task.html", task=task)
 
 @app.route("/edit/<int:task_id>", methods=["GET", "POST"])
 def edit_task(task_id):
     task = forum.get_task(task_id)
+    if not task:
+        abort(404)
     user_id = forum.get_user_id(session["username"])
     if task["user_id"] != user_id:
         abort(403)
@@ -93,27 +97,41 @@ def edit_task(task_id):
 
     if request.method == "POST":
         body = request.form["body"]
-        forum.update_task(task["id"], body)
+        try:
+            forum.update_task(task["id"], body)
+        except sqlite3.IntegrityError:
+            flash("VIRHE: taskia ei ole olemassa")
+            return redirect("/")
         return redirect("/task/" + str(task_id))
         
 @app.route("/remove/<int:task_id>", methods=["GET"])
 def remove_task(task_id):
     task = forum.get_task(task_id)
+    if not task:
+        abort(404)
     user_id = forum.get_user_id(session["username"])
     if task["user_id"] != user_id:
         abort(403)
-
-    forum.remove_task(task["id"])
+    try:
+        forum.remove_task(task["id"])
+    except sqlite3.IntegrityError:
+        flash("VIRHE: taskia ei ole olemassa")
+        return redirect("/")
     return redirect("/todolist")
 
 @app.route("/markdone/<int:task_id>", methods=["GET"])
 def mark_done(task_id):
     task = forum.get_task(task_id)
+    if not task:
+        abort(404)
     user_id = forum.get_user_id(session["username"])
     if task["user_id"] != user_id:
         abort(403)
-        
-    forum.mark_task_done(task["id"])
+    try:
+        forum.mark_task_done(task["id"])
+    except sqlite3.IntegrityError:
+            flash("VIRHE: taskia ei ole olemassa")
+            return redirect("/")
     return redirect("/task/" + str(task_id))
 
 @app.route("/search")
