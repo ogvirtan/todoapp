@@ -1,5 +1,9 @@
   <form action="/edit/{{ task.id }}" method="post">
     <p>
+      Taskin otsikko: <br />
+      <input type="text" name="task" value="{{ task.task }}" maxlength="100" required/>
+    </p>
+    <p>
       Taskin sisältö:<br />
       <textarea name="body" rows="5" cols="40" required>{{ task.body }}</textarea>
     </p>

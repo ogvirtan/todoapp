@@ -24,9 +24,9 @@ def add_task(task, body, user_id):
     sql = "INSERT INTO tasks (tila, task, body, user_id) VALUES (?, ?, ?, ?)"
     db.execute(sql, [0, task, body, user_id])
 
-def update_task(task_id, body):
-    sql = "UPDATE tasks SET body = ? WHERE id = ?"
-    db.execute(sql, [body, task_id])
+def update_task(task, body, task_id):
+    sql = "UPDATE tasks SET (task, body) = (?, ?) WHERE id = ?"
+    db.execute(sql, [task, body, task_id])
 
 def mark_task_done(task_id):
     sql = "UPDATE tasks SET tila = ? WHERE id = ?"

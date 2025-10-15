@@ -123,9 +123,10 @@ def edit_task(task_id):
         return render_template("edit.html", task=task)
 
     if request.method == "POST":
+        title = request.form["task"]
         body = request.form["body"]
         try:
-            forum.update_task(task["id"], body)
+            forum.update_task(title, body, task["id"])
         except sqlite3.IntegrityError:
             flash("VIRHE: taskia ei ole olemassa")
             return redirect("/")
