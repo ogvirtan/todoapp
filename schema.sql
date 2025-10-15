@@ -20,5 +20,6 @@ CREATE TABLE groups (
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
     body TEXT,
-    task_id INTEGER REFERENCES tasks
+    task_id INTEGER REFERENCES tasks,
+    user_id INTEGER REFERENCES users
 );

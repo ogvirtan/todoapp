@@ -6,6 +6,11 @@
 </head>
 
 <body>
+  {% for message in get_flashed_messages() %}
+  <p>
+    <b>{{ message }}</b>
+  </p>
+  {% endfor %}
   <h1>{{ task.task }}</h1>
   <h3>Taskin kuvaus: </h3>
   <p> {{ task.body | show_lines }} </p>
@@ -18,10 +23,22 @@
   {% endif %}
   <a href="/edit/{{ task.id }}">Muokkaa</a>
   <a href="/remove/{{ task.id }}">Poista</a>
+  <a href="/comment/{{ task.id }}">Kommentoi</a>
   <br/>
   <br/>
   <a href="/">Takaisin etusivulle</a>
   <a href="/createtask">Luo uusi taski</a>
+  {% if comments %}
+  <h3>Kommentit:</h3>
+  {% for comment in comments %}
+  <p>
+    {{ comment.body }}
+  </p>
+    <p>
+    Kommentoija: {{ comment.username }}
+  </p>
+  {% endfor %}
+  {% endif %}
 </body>
 
 </html>

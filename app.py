@@ -83,9 +83,31 @@ def addnewtask():
 def show_task(task_id):
     require_login()
     task = forum.get_task(task_id)
+    comments = forum.get_comments(task_id)
     if not task:
         abort(404)
-    return render_template("task.html", task=task)
+    return render_template("task.html", task=task, comments=comments)
+
+@app.route("/comment/<int:task_id>", methods=["GET", "POST"])
+def comment_task(task_id):
+    require_login()
+    task = forum.get_task(task_id)
+    if not task:
+        abort(404)
+    user_id = forum.get_user_id(session["username"])
+
+    if request.method == "GET":
+        return render_template("comment.html", task=task)
+
+    if request.method == "POST":
+        comment = request.form["comment"]
+        try:
+            forum.add_comment(comment, task["id"], user_id)
+        except sqlite3.IntegrityError:
+            flash("VIRHE: taskia ei ole olemassa")
+            return redirect("/")
+        flash("Kommentti lisätty: "+ comment)
+        return redirect("/task/" + str(task_id))
 
 @app.route("/edit/<int:task_id>", methods=["GET", "POST"])
 def edit_task(task_id):
