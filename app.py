@@ -48,10 +48,11 @@ def login():
     
     password_hash = forum.get_pswdhash(username)
 
-    if check_password_hash(password_hash, password):
+    try: 
+        check_password_hash(password_hash, password)
         session["username"] = username
         return redirect("/")
-    else:
+    except:
         flash("VIRHE: väärä tunnus tai salasana")
         return redirect("/loginform")
 

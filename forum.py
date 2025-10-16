@@ -1,7 +1,8 @@
 import db
 def get_pswdhash(username):
     sql = "SELECT password_hash FROM users WHERE username = ?"
-    return db.query(sql, [username])[0][0]
+    result = db.query(sql, [username])
+    return result[0][0] if result else None
 
 def get_user_id(username):
     sql = "SELECT id FROM users WHERE username = ?"
