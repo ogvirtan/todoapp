@@ -1,17 +1,12 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Etusivu</title>
-</head>
+{% block title %}Etusivu{% endblock %}
+
+{% block content %}
+<h2>Etusivu</h2>
 
 <body>
-  <h1>todoapp</h1>
-  {% if session.username %}
-  <a href="/createtask">Luo uusi taski</a>
-  <br/>
-  <a href="/todolist">Oma todo-lista</a>
-   <form action="/search" method="get">
+  <form action="/search" method="get">
     <p>
       Hakusana:
       {% if query %}
@@ -22,13 +17,5 @@
     </p>
     <input type="submit" value="Hae" />
   </form>
-  <p>Olet kirjautunut sisään käyttäjällä {{session.username}}  </p>
-  <a href="/logout">Kirjaudu ulos</a>
-  {% else %}
-  <a href="/loginform"> Kirjaudu sisään</a>
-  <br/>
-  <a href="/register">Luo tunnus</a>  
-  {% endif %}
 </body>
-
-</html>
+{% endblock %}

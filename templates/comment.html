@@ -1,24 +1,20 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>todo-list item comment</title>
-</head>
+{% block title %}Comment{% endblock %}
+
+{% block content %}
 
 <body>
   <h1>{{ task.task }}</h1>
   <h3>Taskin kuvaus: </h3>
   <p> {{ task.body | show_lines }} </p>
-  <br/>
+  <br />
   <form action="/comment/{{ task.id }}" method="post">
     <p>
-        Kommentti:<br />
-        <textarea name="comment" rows="5" cols="40" required></textarea>
+      Kommentti:<br />
+      <textarea name="comment" rows="5" cols="40" required></textarea>
     </p>
     <input type="submit" value="Kommentoi" />
-  </form>  
-  <br/>
-  <a href="/">Takaisin etusivulle</a>
+  </form>
 </body>
-
-</html>
+{% endblock %}

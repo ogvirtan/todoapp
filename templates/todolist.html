@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>todo-list</title>
-</head>
-<body>
+{% block title %}Search{% endblock %}
+
+{% block content %}
   <h1>todo-list</h1>
-{% for task in tasks %}
+  {% for task in tasks %}
   <h3>
     <a href="/task/{{ task.id }}">{{ task.task }}</a>
-  </h3>    
-{% endfor %}
-<a href="/">Takaisin etusivulle</a>
-<a href="/createtask">Luo uusi taski</a>
+  </h3>
+  {% endfor %}
 </body>
-</html>
+
+{% endblock %}

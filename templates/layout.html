@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+
+<body>
+    <div class="header">
+        <h1>todoapp</h1>
+    </div>
+    <div class="nav">
+        {% if session.username %}
+        <nav>
+            <ul>
+                <li><a href="/">Etusivulle</a></li>
+                <li><a href="/todolist">Oma todo-lista</a></li>
+                <li><a href="/createtask">Luo uusi taski</a></li>
+                <li><a href="/logout">Kirjaudu ulos</a></li>
+            </ul>
+        </nav>
+        {% else %}
+        <nav>
+            <ul>
+                <li><a href="/loginform"> Kirjaudu sisään</a></li>
+                <li><a href="/register">Luo tunnus</a></li>
+            </ul>
+        </nav>
+    {% endif %}
+    </div>
+    {% for message in get_flashed_messages() %}
+    <p class="flash">
+      <b>{{ message }}</b>
+    </p>
+  {% endfor %}
+    <div class="content">
+        {% block content %}{% endblock %}
+        {% if session.username %}
+        <p>Olet kirjautunut sisään käyttäjänä {{session.username}}</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>

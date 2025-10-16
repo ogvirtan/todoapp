@@ -1,16 +1,15 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Taskin lisäys</title>
-</head>
+{% block title %}New task{% endblock %}
+
+{% block content %}
 
 <body>
-    <h1>Luo uusi taski todo-listalle</h1>
+  <h1>Luo uusi taski todo-listalle</h1>
   <form action="/addnewtask" method="post">
     <p>
       Taskin otsikko: <br />
-      <input type="text" name="task" maxlength="100" required/>
+      <input type="text" name="task" maxlength="100" required />
     </p>
     <p>
       Taskin sisältö: <br />
@@ -18,8 +17,5 @@
     </p>
     <input type="submit" value="Lisää tehtävälistalle" />
   </form>
-  <br/>
-  <a href="/">Etusivulle</a> 
 </body>
-
-</html>
+{% endblock %}

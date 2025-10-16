@@ -1,31 +1,20 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Kirjautuminen</title>
-</head>
+{% block title %}Login{% endblock %}
 
-<body>
-  {% for message in get_flashed_messages() %}
+{% block content %}
+
+<form action="/login" method="post">
   <p>
-    <b>{{ message }}</b>
+    Tunnus: <br />
+    <input type="text" name="username" required />
   </p>
-  {% endfor %}
-  <form action="/login" method="post">
-    <p>
-      Tunnus: <br />
-      <input type="text" name="username" required/>
-    </p>
-    <p>
-      Salasana: <br />
-      <input type="password" name="password" required/>
-    </p>
-    <input type="submit" value="Kirjaudu" />
-  </form>
-  <br/>
-  <a href="/">Etusivulle</a> 
-  <br/>
-  <a href="/register">Luo tunnus</a> 
+  <p>
+    Salasana: <br />
+    <input type="password" name="password" required />
+  </p>
+  <input type="submit" value="Kirjaudu" />
+</form>
 </body>
 
-</html>
+{% endblock %}

@@ -1,35 +1,23 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-  <title>Rekisteröinti</title>
-</head>
+{% block title %}Register{% endblock %}
 
-<body>
-  {% for message in get_flashed_messages() %}
-  <p>
-    <b>{{ message }}</b>
-  </p>
-  {% endfor %}
+{% block content %}
   <form action="/create" method="post">
     <p>
       Tunnus: <br />
-      <input type="text" name="username" maxlength="100" required/>
+      <input type="text" name="username" maxlength="100" required />
     </p>
     <p>
       Salasana: <br />
-      <input type="password" name="password1" maxlength="100" required/>
+      <input type="password" name="password1" maxlength="100" required />
     </p>
     <p>
       Salasana uudestaan: <br />
-      <input type="password" name="password2" maxlength="100" required/>
+      <input type="password" name="password2" maxlength="100" required />
     </p>
     <input type="submit" value="Luo tunnus" />
   </form>
-  <br/>
-  <a href="/">Etusivulle</a> 
-  <br/>
-  <a href="/loginform">Kirjaudu sisään</a> 
 </body>
 
-</html>
+{% endblock %}

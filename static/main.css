@@ -1,0 +1,55 @@
+body {
+  margin: auto;
+  max-width: 50em;
+  font-family: sans-serif;
+  background-color: lightgreen;
+}
+
+.header {
+  background-color: green;
+  color: white;
+  padding: 1em;
+  margin: 0.5em 0;
+  text-align: center;
+}
+
+.nav {
+  background-color: lightcyan;
+  padding: 1em;
+  margin: 0.5em 0;
+  text-align: center;
+  }
+
+nav ul {
+  padding: 0;
+  margin: 0;
+}
+
+nav li {
+  display: inline-block;
+  padding: 0 1em;
+  margin: 0;
+}
+
+nav li:not(:last-of-type) {
+  border-right: 3px solid green;
+}
+
+
+.content {
+  background-color: white;
+  padding: 1em;
+  margin: 0.5em 0;
+}
+
+.comments {
+  background-color: lightgray;
+  padding: 1em;
+  margin: 0.5em 0;
+}  
+.flash{
+  background-color: green;
+  color: white;
+  padding: 1em;
+  margin: 0.5em 0;
+}  
