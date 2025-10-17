@@ -17,9 +17,16 @@ def get_task(task_id):
     result = db.query(sql, [task_id])
     return result[0] if result else None
 
-def get_task_by_user(user_id):
-    sql = "SELECT id, task FROM tasks WHERE user_id = ?"
-    return db.query(sql, [user_id])
+def get_task_by_user(user_id, page, page_size):
+    sql = "SELECT id, task FROM tasks WHERE user_id = ? LIMIT ? OFFSET ?"
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [user_id, limit, offset])
+
+def task_count_by_user(user_id):
+    sql = "SELECT COUNT(task) FROM tasks WHERE user_id = ?"
+    result = db.query(sql, [user_id])
+    return result[0][0] if result else None
 
 def add_task(task, body, user_id):
     sql = "INSERT INTO tasks (tila, task, body, user_id) VALUES (?, ?, ?, ?)"

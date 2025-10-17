@@ -9,6 +9,13 @@
     <a href="/task/{{ task.id }}">{{ task.task }}</a>
   </h3>
   {% endfor %}
+  {% if page > 1 %}
+    <a href="/todolist/{{ page - 1 }}">&lt;&lt;</a>
+  {% endif %}
+    Sivu {{ page }}/{{ page_count }}
+  {% if page < page_count %}
+    <a href="/todolist/{{ page + 1 }}">&gt;&gt;</a>
+  {% endif %}
 </body>
 
 {% endblock %}

@@ -182,6 +182,7 @@ def search(page=1):
     search_count = forum.search_count(query) if query else 0
     page_count = math.ceil(search_count / page_size)
     page_count = max(page_count, 1)
+    
     if page < 1:
         return redirect("/search/1")
     if page > page_count:
@@ -189,11 +190,22 @@ def search(page=1):
     return render_template("search.html", query=query, results=results, page=page, page_count=page_count)
 
 @app.route("/todolist")
-def todolist():
+@app.route("/todolist/<int:page>")
+def todolist(page=1):
     require_login()
+    page_size = 10
     user_id = forum.get_user_id(session["username"]) 
-    tasks = forum.get_task_by_user(user_id)
-    return render_template("todolist.html",tasks=tasks)
+    task_count = forum.task_count_by_user(user_id)
+    page_count = math.ceil(task_count / page_size)
+    page_count = max(page_count, 1)
+
+    if page < 1:
+        return redirect("/todolist/1")
+    if page > page_count:
+        return redirect("/todolist/" + str(page_count))
+    
+    tasks = forum.get_task_by_user(user_id, page, page_size)
+    return render_template("todolist.html",tasks=tasks, page=page, page_count=page_count)
 
 @app.template_filter()
 def show_lines(content):
