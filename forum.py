@@ -47,6 +47,13 @@ def get_comments(task_id):
     sql = "SELECT c.body, c.task_id, u.username FROM comments c, users u WHERE u.id = c.user_id AND c.task_id = ?"
     return db.query(sql, [task_id])
 
-def search(query):
-    sql = "SELECT id, task FROM tasks WHERE task LIKE ?"
-    return db.query(sql, ["%" + query + "%"])
+def search(query, page, page_size):
+    sql = "SELECT id, task FROM tasks WHERE task LIKE ? LIMIT ? OFFSET ?"
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, ["%" + query + "%", limit, offset])
+
+def search_count(query):
+    sql = "SELECT COUNT(task) FROM tasks WHERE task LIKE ?"
+    result = db.query(sql, ["%" + query + "%"])
+    return result[0][0] if result else None

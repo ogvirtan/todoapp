@@ -27,4 +27,13 @@
   {% endfor %}
 </ul>
 {% endif %}
+<p>
+  {% if page > 1 %}
+    <a href="/search/{{ page - 1 }}?query={{ query }}">&lt;&lt;</a>
+  {% endif %}
+    Sivu {{ page }}/{{ page_count }}
+  {% if page < page_count %}
+    <a href="/search/{{ page + 1 }}?query={{ query }}">&gt;&gt;</a>
+  {% endif %}
+</p>
 {% endblock %}

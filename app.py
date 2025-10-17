@@ -6,6 +6,7 @@ import db
 import config
 import forum
 import markupsafe
+import math
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -172,11 +173,20 @@ def mark_done(task_id):
     return redirect("/task/" + str(task_id))
 
 @app.route("/search")
-def search():
+@app.route("/search/<int:page>")
+def search(page=1):
     require_login()
     query = request.args.get("query")
-    results = forum.search(query) if query else []
-    return render_template("search.html", query=query, results=results)
+    page_size = 10
+    results = forum.search(query, page, page_size) if query else []
+    search_count = forum.search_count(query) if query else 0
+    page_count = math.ceil(search_count / page_size)
+    page_count = max(page_count, 1)
+    if page < 1:
+        return redirect("/search/1")
+    if page > page_count:
+        return redirect("/search/" + str(page_count))
+    return render_template("search.html", query=query, results=results, page=page, page_count=page_count)
 
 @app.route("/todolist")
 def todolist():
