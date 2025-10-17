@@ -14,49 +14,51 @@ app.secret_key = config.secret_key
 def index():
     return render_template("index.html")
 
-@app.route("/register")
+@app.route("/register", methods=["GET","POST"])
 def register():
-    return render_template("register.html")
+    if request.method == "GET":
+        return render_template("register.html", filled={})
 
-@app.route("/create", methods=["POST"])
-def create():
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
-    if password1 != password2:
-        flash("VIRHE: salasanat eivät ole samat")
-        return redirect("/register")
-    password_hash = generate_password_hash(password1)
+    if request.method == "POST":
+        username = request.form["username"]
+        password1 = request.form["password1"]
+        password2 = request.form["password2"]
+        filled = {"username": username}
+        if password1 != password2:
+            flash("VIRHE: salasanat eivät ole samat")
+            return render_template("register.html", filled=filled)
+        password_hash = generate_password_hash(password1)
 
-    try:
-        forum.add_user(username, password_hash)
-    except sqlite3.IntegrityError:
-        flash("VIRHE: tunnus on jo varattu")
-        return redirect("/register")
+        try:
+            forum.add_user(username, password_hash)
+        except sqlite3.IntegrityError:
+            flash("VIRHE: tunnus on jo varattu")
+            return render_template("register.html", filled=filled)
 
-    flash("Tunnus luotu!")
-    return redirect("/loginform")
+        flash("Tunnus luotu!")
+        return redirect("/login")
 
-@app.route("/loginform")
-def loginform():
-    return render_template("loginform.html")
-
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["GET","POST"])
 def login():
-    username = request.form["username"]
-    password = request.form["password"]
-    
-    password_hash = forum.get_pswdhash(username)
+    if request.method == "GET":
+        return render_template("loginform.html", filled={})
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        
+        password_hash = forum.get_pswdhash(username)
 
-    if password_hash == None:
-        flash("VIRHE: väärä tunnus tai salasana")
-        return redirect("/loginform")
-    elif check_password_hash(password_hash, password):
-        session["username"] = username
-        return redirect("/")
-    else:
-        flash("VIRHE: väärä tunnus tai salasana")
-        return redirect("/loginform")
+        if password_hash == None:
+            flash("VIRHE: väärä tunnus tai salasana")
+            filled = {"username": username}
+            return render_template("loginform.html", filled=filled)
+        elif check_password_hash(password_hash, password):
+            session["username"] = username
+            return redirect("/")
+        else:
+            flash("VIRHE: väärä tunnus tai salasana")
+            filled = {"username": username}
+            return render_template("loginform.html", filled=filled)
 
 @app.route("/logout")
 def logout():
