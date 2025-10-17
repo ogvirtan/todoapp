@@ -23,7 +23,7 @@
     {% for comment in comments %}
     <li>
       <p style="font-size:small">
-        Kommentoija: {{ comment.username }}
+        Kommentoija: <a href="/userpage/{{ comment.id }}">{{ comment.username }}</a>
       </p>
       <p>
         {{ comment.body }}

@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}Käyttäjäsivut{% endblock %}
+
+{% block content %}
+<h2>Käyttäjän {{ username }} sivu</h2>
+
+<body>
+    {% if task_count != 0 %}
+    <p>
+        Käyttäjä {{ username }} on luonut {{ task_count }} taskia, joista on merkitty suoritetuksi {{ task_completed_count }} kappaletta.
+    </p>
+    <p>
+        Suoritettujen taskien prosentuaalinen osuus kaikista luoduista taskeista on {{ task_completed_count/task_count*100 }} %
+    </p>
+    <p>
+        Käyttäjän {{ username }} luomia taskeja on kommentoitu {{ comment_sum }} kertaa, eniten kommentteja on saanut
+        taski: {{ most_commented_task }}, jota on kommentoitu {{ popular_task_com_sum }} kertaa
+    </p>
+    {% else %}
+    <p>
+        Käyttäjä {{ username }} ei ole vielä luonut yhtään taskia.
+    </p>
+    {% endif %}
+    <p>
+        Käyttäjä {{ username }} on kommentoinut yhteensä {{ comment_count }} kertaa. Käyttäjä on kommentoinut {{
+        comment_distinct_user_count }} eri käyttäjän taskeja, yhteensä {{ comment_distinct_task_count }} eri taskia
+    </p>
+</body>
+{% endblock %}

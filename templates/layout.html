@@ -37,7 +37,7 @@
     <div class="content">
         {% block content %}{% endblock %}
         {% if session.username %}
-        <p>Olet kirjautunut sisään käyttäjänä {{session.username}}</p>
+        <p>Olet kirjautunut sisään käyttäjänä <a href="/userpage/{{ session.user_id }}">{{session.username}}</a></p>
         {% endif %}
     </div>
 </body>

@@ -57,6 +57,7 @@ def login():
             return render_template("loginform.html", filled=filled)
         elif check_password_hash(password_hash, password):
             session["username"] = username
+            session["user_id"] = forum.get_user_id(username)
             return redirect("/")
         else:
             flash("VIRHE: väärä tunnus tai salasana")
@@ -67,6 +68,7 @@ def login():
 def logout():
     require_login()
     del session["username"]
+    del session["user_id"]
     return redirect("/")
 
 @app.route("/createtask")
@@ -215,6 +217,22 @@ def todolist(page=1):
     
     tasks = forum.get_task_by_user(user_id, page, page_size)
     return render_template("todolist.html",tasks=tasks, page=page, page_count=page_count)
+
+@app.route("/userpage/<int:user_id>")
+def userpage(user_id):
+    require_login()
+    username = forum.get_username(user_id)
+    task_count = forum.task_count_by_user(user_id)
+    task_completed_count = forum.task_completed_count_by_user(user_id)
+    comment_count = forum.comment_count_by_user(user_id)
+    comment_distinct_user_count = forum.comment_distinct_user_count(user_id)
+    comment_distinct_task_count = forum.comment_distinct_task_count(user_id)
+    comment_sum = forum.comment_sum_by_user(user_id)
+    most_commented_task = forum.most_commented_task(user_id)
+    popular_task_com_sum = forum.popular_task_com_sum(user_id)
+    return render_template("userpage.html", username=username, task_count=task_count, task_completed_count=task_completed_count, 
+    comment_count=comment_count, comment_distinct_user_count=comment_distinct_user_count, comment_distinct_task_count=comment_distinct_task_count, 
+    comment_sum=comment_sum, most_commented_task=most_commented_task, popular_task_com_sum=popular_task_com_sum)
 
 @app.template_filter()
 def show_lines(content):
