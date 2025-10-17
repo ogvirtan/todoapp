@@ -50,9 +50,16 @@ def add_comment(comment, task_id, user_id):
     sql = "INSERT INTO comments (body, task_id, user_id) VALUES (?, ?, ?)"
     db.execute(sql, [comment, task_id, user_id])
 
-def get_comments(task_id):
-    sql = "SELECT c.body, c.task_id, u.username FROM comments c, users u WHERE u.id = c.user_id AND c.task_id = ?"
-    return db.query(sql, [task_id])
+def get_comments(task_id, page, page_size):
+    sql = "SELECT c.body, c.task_id, u.username FROM comments c, users u WHERE u.id = c.user_id AND c.task_id = ? LIMIT ? OFFSET ?"
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [task_id, limit, offset])
+
+def comment_count(task_id):
+    sql = "SELECT COUNT(body) FROM comments WHERE task_id = ?"
+    result = db.query(sql, [task_id])
+    return result[0][0] if result else None
 
 def search(query, page, page_size):
     sql = "SELECT id, task FROM tasks WHERE task LIKE ? LIMIT ? OFFSET ?"

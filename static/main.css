@@ -47,6 +47,22 @@ nav li:not(:last-of-type) {
   padding: 1em;
   margin: 0.5em 0;
 }  
+
+.comments  ul {
+  padding: 0;
+  margin: 0;
+}
+
+.comments li {
+  display: grid;
+  padding: 0 1em;
+  margin: 0;
+}
+
+.comments li:not(:last-of-type) {
+  border-bottom: 1px solid black;
+}
+
 .flash{
   background-color: green;
   color: white;

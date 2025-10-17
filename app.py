@@ -88,13 +88,22 @@ def addnewtask():
     return redirect("/task/" + str(task_id))
 
 @app.route("/task/<int:task_id>")
-def show_task(task_id):
+@app.route("/task/<int:task_id>/<int:page>")
+def show_task(task_id, page=1):
     require_login()
+    page_size = 10
+    comment_count = forum.comment_count(task_id)
+    page_count = math.ceil(comment_count / page_size)
+    page_count = max(page_count, 1)
+    if page < 1:
+        return redirect("/task/<int:task_id>/1")
+    if page > page_count:
+        return redirect("/task/<int:task_id>/" + str(page_count))
     task = forum.get_task(task_id)
-    comments = forum.get_comments(task_id)
+    comments = forum.get_comments(task_id, page, page_size)
     if not task:
         abort(404)
-    return render_template("task.html", task=task, comments=comments)
+    return render_template("task.html", task=task, comments=comments, page=page, page_count=page_count)
 
 @app.route("/comment/<int:task_id>", methods=["GET", "POST"])
 def comment_task(task_id):
@@ -182,7 +191,7 @@ def search(page=1):
     search_count = forum.search_count(query) if query else 0
     page_count = math.ceil(search_count / page_size)
     page_count = max(page_count, 1)
-    
+
     if page < 1:
         return redirect("/search/1")
     if page > page_count:

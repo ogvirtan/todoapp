@@ -3,32 +3,42 @@
 {% block title %}Task{% endblock %}
 
 {% block content %}
-  <h1>{{ task.task }}</h1>
-  <h3>Taskin kuvaus: </h3>
-  <p> {{ task.body | show_lines }} </p>
-  {% if task.tila == 0 %}
-  <a href="/markdone/{{ task.id }}">Merkitse tehdyksi</a>
-  <br />
-  <br />
-  {% else %}
-  <p>Taski suoritettu</p>
-  {% endif %}
-  <a href="/edit/{{ task.id }}">Muokkaa</a>
-  <a href="/remove/{{ task.id }}">Poista</a>
-  <a href="/comment/{{ task.id }}">Kommentoi</a>
-  {% if comments %}
-  <div class="comments">
-    <h3>Kommentit:</h3>
+<h1>{{ task.task }}</h1>
+<h3>Taskin kuvaus: </h3>
+<p> {{ task.body | show_lines }} </p>
+{% if task.tila == 0 %}
+<a href="/markdone/{{ task.id }}">Merkitse tehdyksi</a>
+<br />
+<br />
+{% else %}
+<p>Taski suoritettu</p>
+{% endif %}
+<a href="/edit/{{ task.id }}">Muokkaa</a>
+<a href="/remove/{{ task.id }}">Poista</a>
+<a href="/comment/{{ task.id }}">Kommentoi</a>
+{% if comments %}
+<div class="comments">
+  <h3>Kommentit:</h3>
+  <ul>
     {% for comment in comments %}
-    <p>
-      {{ comment.body }}
-    </p>
-    <p>
-      Kommentoija: {{ comment.username }}
-    </p>
+    <li>
+      <p style="font-size:small">
+        Kommentoija: {{ comment.username }}
+      </p>
+      <p>
+        {{ comment.body }}
+      </p>
+    </li>
     {% endfor %}
-  </div>
+  </ul>
+</div>
+{% if page > 1 %}
+<a href="/task/{{ task.id }}/{{ page - 1 }}">&lt;&lt;</a>
+{% endif %}
+Sivu {{ page }}/{{ page_count }}
+{% if page < page_count %} <a href="/task/{{ task.id }}/{{ page + 1 }}">&gt;&gt;</a>
   {% endif %}
-</body>
+  {% endif %}
+  </body>
 
-{% endblock %}
+  {% endblock %}
