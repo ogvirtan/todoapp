@@ -12,11 +12,6 @@ CREATE TABLE tasks (
     user_id INTEGER REFERENCES users
 );
 
-CREATE TABLE groups (
-    id INTEGER PRIMARY KEY,
-    task_id INTEGER REFERENCES tasks
-);
-
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
     body TEXT,
