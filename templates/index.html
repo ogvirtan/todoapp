@@ -6,7 +6,6 @@
 <h2>Etusivu</h2>
 
 <body>
-  {% if session.username %}
   <form action="/search" method="get">
     <p>
       Hakusana:
@@ -34,9 +33,6 @@
   {% if page < page_count %}
     <a href="/{{ page + 1 }}">&gt;&gt;</a>
   </div>
-  {% endif %}
-  {% else %}
-  <p>Kirjaudu sisään nähdäksesi sivun sisällön</p>
   {% endif %}
 </body>
 {% endblock %}

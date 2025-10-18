@@ -108,7 +108,6 @@ def addnewtask():
 @app.route("/task/<int:task_id>")
 @app.route("/task/<int:task_id>/<int:page>")
 def show_task(task_id, page=1):
-    require_login()
     page_size = 10
     comment_count = forum.comment_count(task_id)
     page_count = math.ceil(comment_count / page_size)
@@ -206,7 +205,6 @@ def mark_done(task_id):
 @app.route("/search")
 @app.route("/search/<int:page>")
 def search(page=1):
-    require_login()
     query = request.args.get("query")
     page_size = 10
     results = forum.search(query, page, page_size) if query else []
@@ -241,7 +239,6 @@ def todolist(page=1):
 @app.route("/userpage/<int:user_id>")
 @app.route("/userpage/<int:user_id>/<int:task_page>/<int:comment_page>")
 def userpage(user_id, task_page=1, comment_page=1):
-    require_login()
     username = forum.get_username(user_id)
 
     task_page_size = 5
