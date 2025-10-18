@@ -46,7 +46,7 @@ def register():
 
     if request.method == "POST":
         username = request.form["username"]
-        if len(username) == 0 or len(username)>100:
+        if len(username) == 0 or len(username)>40:
             abort(403)
         password1 = request.form["password1"]
         password2 = request.form["password2"]
@@ -109,9 +109,8 @@ def createtask():
 def addnewtask():
     require_login()
     task = request.form["task"]
-    if len(task) == 0:
-        flash("VIRHE: taskin otsikko ei voi olla tyhjä")
-        redirect("/createtask")
+    if len(task) == 0 or len(task) > 40:
+        abort(403)
     body = request.form["body"]
     user_id = session["user_id"] 
     forum.add_task(task, body, user_id)
@@ -174,6 +173,8 @@ def edit_task(task_id):
         check_csrf()
         title = request.form["task"]
         body = request.form["body"]
+        if len(body) == 0 or len(title) == 0 or len(title) > 40:
+            abort(403)
         try:
             forum.update_task(title, body, task["id"])
         except sqlite3.IntegrityError:
