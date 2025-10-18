@@ -35,12 +35,35 @@
         <a href="/task/{{ task.id }}">{{ task.task }}</a>
     </p>
     {% endfor %}
-    {% if page > 1 %}
-    <a href="/userpage/{{ user_id }}/{{ page - 1 }}">&lt;&lt;</a>
+    {% if task_page > 1 %}
+    <a href="/userpage/{{ user_id }}/{{ task_page - 1 }}/{{ comment_page }}">&lt;&lt;</a>
     {% endif %}
-    Sivu {{ page }}/{{ page_count }}
-    {% if page < page_count %} <a href="/userpage/{{ user_id }}/{{ page + 1 }}">&gt;&gt;</a>
-        {% endif %}
+    Sivu {{ task_page }}/{{ task_page_count }}
+    {% if task_page < task_page_count %} 
+    <a href="/userpage/{{ user_id }}/{{ task_page + 1 }}/{{ comment_page }}"">&gt;&gt;</a>
+    {% endif %}
+    {% endif %}
+
+    {% if comment_count != 0 %}
+    <h3>Käyttäjän {{ username }} kommentit</h3>
+    <div class="comments">
+        <ul>
+    {% for comment in comments %}
+    <li>
+        <p>Kommentoitu taski: <a href="/task/{{ comment.task_id }}">{{ comment.task }}</a></p>
+        <p>Kommentti: {{ comment.body }}</p>
+    </li>
+    {% endfor %}
+    </ul>
+    </div>
+    {% if comment_page > 1 %}
+    <a href="/userpage/{{ user_id }}/{{ task_page}}/{{ comment_page - 1}}">&lt;&lt;</a>
+    {% endif %}
+    Sivu {{ comment_page }}/{{ comment_page_count }}
+    {% if comment_page < comment_page_count %} 
+    <a href="/userpage/{{ user_id }}/{{ task_page }}/{{ comment_page + 1}}"">&gt;&gt;</a>
+    {% endif %}
+    
     {% endif %}
 </body>
 {% endblock %}

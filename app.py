@@ -219,15 +219,34 @@ def todolist(page=1):
     return render_template("todolist.html",tasks=tasks, page=page, page_count=page_count)
 
 @app.route("/userpage/<int:user_id>")
-@app.route("/userpage/<int:user_id>/<int:page>")
-def userpage(user_id, page=1):
+@app.route("/userpage/<int:user_id>/<int:task_page>/<int:comment_page>")
+def userpage(user_id, task_page=1, comment_page=1):
     require_login()
     username = forum.get_username(user_id)
-    page_size = 5
+
+    task_page_size = 5
     task_count = forum.task_count_by_user(user_id)
-    page_count = math.ceil(task_count / page_size)
-    page_count = max(page_count, 1)
-    tasks = forum.get_task_by_user(user_id, page, page_size)
+    task_page_count = math.ceil(task_count / task_page_size)
+    task_page_count = max(task_page_count, 1)
+    tasks = forum.get_task_by_user(user_id, task_page, task_page_size)
+
+    comment_page_size = 5
+    comment_count = forum.comment_count_by_user(user_id)
+    comment_page_count = math.ceil(comment_count / comment_page_size)
+    comment_page_count = max(comment_page_count, 1)
+    comments = forum.get_comments_by_user(user_id, comment_page, comment_page_size)
+
+    if task_page < 1:
+        return redirect("/todolist/1" + str(comment_page_count))
+    if task_page > task_page_count:
+        return redirect("/todolist/" + str(task_page_count)+ "/" + str(comment_page_count))
+    
+    if comment_page < 1:
+        return redirect("/todolist/" + str(task_page_count)+ "/1")
+    if comment_page > comment_page_count:
+        return redirect("/todolist/" + str(task_page_count)+ "/" + str(comment_page_count))
+
+
     task_count = forum.task_count_by_user(user_id)
     task_completed_count = forum.task_completed_count_by_user(user_id)
     comment_count = forum.comment_count_by_user(user_id)
@@ -236,8 +255,10 @@ def userpage(user_id, page=1):
     comment_sum = forum.comment_sum_by_user(user_id)
     most_commented_task = forum.most_commented_task(user_id)
     popular_task_com_sum = forum.popular_task_com_sum(user_id)
-    return render_template("userpage.html", username=username, user_id=user_id, tasks=tasks, page=page, page_count=page_count, task_count=task_count, task_completed_count=task_completed_count, 
-    comment_count=comment_count, comment_distinct_user_count=comment_distinct_user_count, comment_distinct_task_count=comment_distinct_task_count, 
+    
+    return render_template("userpage.html", username=username, user_id=user_id, tasks=tasks, task_page=task_page, task_page_count=task_page_count, task_count=task_count, 
+    comments=comments, comment_page=comment_page, comment_page_count=comment_page_count, comment_count=comment_count,
+    task_completed_count=task_completed_count, comment_distinct_user_count=comment_distinct_user_count, comment_distinct_task_count=comment_distinct_task_count, 
     comment_sum=comment_sum, most_commented_task=most_commented_task, popular_task_com_sum=popular_task_com_sum)
 
 @app.template_filter()
