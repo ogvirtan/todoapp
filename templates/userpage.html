@@ -8,10 +8,12 @@
 <body>
     {% if task_count != 0 %}
     <p>
-        Käyttäjä {{ username }} on luonut {{ task_count }} taskia, joista on merkitty suoritetuksi {{ task_completed_count }} kappaletta.
+        Käyttäjä {{ username }} on luonut {{ task_count }} taskia, joista on merkitty suoritetuksi {{
+        task_completed_count }} kappaletta.
     </p>
     <p>
-        Suoritettujen taskien prosentuaalinen osuus kaikista luoduista taskeista on {{ task_completed_count/task_count*100 }} %
+        Suoritettujen taskien prosentuaalinen osuus kaikista luoduista taskeista on {{
+        task_completed_count/task_count*100 }} %
     </p>
     <p>
         Käyttäjän {{ username }} luomia taskeja on kommentoitu {{ comment_sum }} kertaa, eniten kommentteja on saanut
@@ -26,5 +28,19 @@
         Käyttäjä {{ username }} on kommentoinut yhteensä {{ comment_count }} kertaa. Käyttäjä on kommentoinut {{
         comment_distinct_user_count }} eri käyttäjän taskeja, yhteensä {{ comment_distinct_task_count }} eri taskia
     </p>
+    {% if task_count != 0 %}
+    <h3>Käyttäjän {{ username }} todolist</h3>
+    {% for task in tasks %}
+    <p>
+        <a href="/task/{{ task.id }}">{{ task.task }}</a>
+    </p>
+    {% endfor %}
+    {% if page > 1 %}
+    <a href="/userpage/{{ user_id }}/{{ page - 1 }}">&lt;&lt;</a>
+    {% endif %}
+    Sivu {{ page }}/{{ page_count }}
+    {% if page < page_count %} <a href="/userpage/{{ user_id }}/{{ page + 1 }}">&gt;&gt;</a>
+        {% endif %}
+    {% endif %}
 </body>
 {% endblock %}

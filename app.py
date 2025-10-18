@@ -84,7 +84,7 @@ def addnewtask():
         flash("VIRHE: taskin otsikko ei voi olla tyhjä")
         redirect("/createtask")
     body = request.form["body"]
-    user_id = forum.get_user_id(session["username"]) 
+    user_id = session["user_id"] 
     forum.add_task(task, body, user_id)
     task_id = db.last_insert_id()
     return redirect("/task/" + str(task_id))
@@ -113,7 +113,7 @@ def comment_task(task_id):
     task = forum.get_task(task_id)
     if not task:
         abort(404)
-    user_id = forum.get_user_id(session["username"])
+    user_id = session["user_id"]
 
     if request.method == "GET":
         return render_template("comment.html", task=task)
@@ -134,7 +134,7 @@ def edit_task(task_id):
     task = forum.get_task(task_id)
     if not task:
         abort(404)
-    user_id = forum.get_user_id(session["username"])
+    user_id = session["user_id"]
     if task["user_id"] != user_id:
         abort(403)
 
@@ -157,7 +157,7 @@ def remove_task(task_id):
     task = forum.get_task(task_id)
     if not task:
         abort(404)
-    user_id = forum.get_user_id(session["username"])
+    user_id = session["user_id"]
     if task["user_id"] != user_id:
         abort(403)
     try:
@@ -173,7 +173,7 @@ def mark_done(task_id):
     task = forum.get_task(task_id)
     if not task:
         abort(404)
-    user_id = forum.get_user_id(session["username"])
+    user_id = session["user_id"]
     if task["user_id"] != user_id:
         abort(403)
     try:
@@ -205,7 +205,7 @@ def search(page=1):
 def todolist(page=1):
     require_login()
     page_size = 10
-    user_id = forum.get_user_id(session["username"]) 
+    user_id = session["user_id"]
     task_count = forum.task_count_by_user(user_id)
     page_count = math.ceil(task_count / page_size)
     page_count = max(page_count, 1)
@@ -219,9 +219,15 @@ def todolist(page=1):
     return render_template("todolist.html",tasks=tasks, page=page, page_count=page_count)
 
 @app.route("/userpage/<int:user_id>")
-def userpage(user_id):
+@app.route("/userpage/<int:user_id>/<int:page>")
+def userpage(user_id, page=1):
     require_login()
     username = forum.get_username(user_id)
+    page_size = 5
+    task_count = forum.task_count_by_user(user_id)
+    page_count = math.ceil(task_count / page_size)
+    page_count = max(page_count, 1)
+    tasks = forum.get_task_by_user(user_id, page, page_size)
     task_count = forum.task_count_by_user(user_id)
     task_completed_count = forum.task_completed_count_by_user(user_id)
     comment_count = forum.comment_count_by_user(user_id)
@@ -230,7 +236,7 @@ def userpage(user_id):
     comment_sum = forum.comment_sum_by_user(user_id)
     most_commented_task = forum.most_commented_task(user_id)
     popular_task_com_sum = forum.popular_task_com_sum(user_id)
-    return render_template("userpage.html", username=username, task_count=task_count, task_completed_count=task_completed_count, 
+    return render_template("userpage.html", username=username, user_id=user_id, tasks=tasks, page=page, page_count=page_count, task_count=task_count, task_completed_count=task_completed_count, 
     comment_count=comment_count, comment_distinct_user_count=comment_distinct_user_count, comment_distinct_task_count=comment_distinct_task_count, 
     comment_sum=comment_sum, most_commented_task=most_commented_task, popular_task_com_sum=popular_task_com_sum)
 
