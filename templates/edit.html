@@ -12,6 +12,7 @@
     Taskin sisältö:<br />
     <textarea name="body" rows="5" cols="40" required>{{ task.body }}</textarea>
   </p>
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <input type="submit" value="Lähetä" />
 </form>
 {% endblock %}

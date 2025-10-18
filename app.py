@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask
 from flask import render_template, redirect, request, session, flash, abort
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash, secrets
 import db
 import config
 import forum
@@ -70,6 +70,7 @@ def login():
         elif check_password_hash(password_hash, password):
             session["username"] = username
             session["user_id"] = forum.get_user_id(username)
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             flash("VIRHE: väärä tunnus tai salasana")
@@ -81,11 +82,14 @@ def logout():
     require_login()
     del session["username"]
     del session["user_id"]
+    del session["csrf_token"]
     return redirect("/")
 
-@app.route("/createtask")
+@app.route("/createtask", methods=["GET", "POST"])
 def createtask():
     require_login()
+    if request.method == "POST":
+        check_csrf()
     return render_template("createtask.html")
 
 @app.route("/addnewtask", methods = ["POST"])
@@ -131,6 +135,7 @@ def comment_task(task_id):
         return render_template("comment.html", task=task)
 
     if request.method == "POST":
+        check_csrf()
         comment = request.form["comment"]
         try:
             forum.add_comment(comment, task["id"], user_id)
@@ -154,6 +159,7 @@ def edit_task(task_id):
         return render_template("edit.html", task=task)
 
     if request.method == "POST":
+        check_csrf()
         title = request.form["task"]
         body = request.form["body"]
         try:
@@ -163,9 +169,10 @@ def edit_task(task_id):
             return redirect("/")
         return redirect("/task/" + str(task_id))
         
-@app.route("/remove/<int:task_id>", methods=["GET"])
+@app.route("/remove/<int:task_id>", methods=["POST"])
 def remove_task(task_id):
     require_login()
+    check_csrf()
     task = forum.get_task(task_id)
     if not task:
         abort(404)
@@ -179,9 +186,10 @@ def remove_task(task_id):
         return redirect("/")
     return redirect("/todolist")
 
-@app.route("/markdone/<int:task_id>", methods=["GET"])
+@app.route("/markdone/<int:task_id>", methods=["POST"])
 def mark_done(task_id):
     require_login()
+    check_csrf()
     task = forum.get_task(task_id)
     if not task:
         abort(404)
@@ -281,4 +289,8 @@ def show_lines(content):
 
 def require_login():
     if "username" not in session:
+        abort(403)
+
+def check_csrf():
+    if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)

@@ -3,22 +3,47 @@
 {% block title %}Task{% endblock %}
 
 {% block content %}
-<div class="todolist">
-<h1>{{ task.task }}</h1>
-<h3 style="color:black">Taskin kuvaus: </h3>
-<p> {{ task.body | show_lines }} </p>
-{% if task.tila == 0 %}
-<a href="/markdone/{{ task.id }}">Merkitse tehdyksi</a>
-<br />
-<br />
-{% else %}
-<p>Taski suoritettu</p>
-{% endif %}
-<a href="/edit/{{ task.id }}">Muokkaa</a>
-<a href="/remove/{{ task.id }}">Poista</a>
-<a href="/comment/{{ task.id }}">Kommentoi</a>
-<p>Taskin on luonut käyttäjä <a href="/userpage/{{ task.user_id }}">{{task.username}}</a></p>
+<div class="todolist" style="margin-bottom: 0">
+  <h1>{{ task.task }}</h1>
+  <h3 style="color:black">Taskin kuvaus: </h3>
+  <p> {{ task.body | show_lines }} </p>
+  <hr>
+  {% if task.tila == 1 %}
+  <p>Taski suoritettu</p>
+  {% endif %}
+  {% if session.user_id != task.user_id %}
+  <p>Taskin on luonut käyttäjä <a href="/userpage/{{ task.user_id }}">{{task.username}}</a></p>
+  {% endif %}
 </div>
+<nav class="nav" style="background-color:honeydew; margin-top: 0; text-align: left">
+  <ul>
+    {% if session.user_id == task.user_id %}
+    {% if task.tila == 0 %}
+    <li style="border-right: none">
+      <form action="/markdone/{{ task.id }}" method="post">
+        <input type="submit" value="Merkitse tehdyksi">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      </form>
+    </li>
+    {% endif %}
+    <li style="border-right: none">
+      <form action="/edit/{{ task.id }}" method="get">
+        <input type="submit" value="Muokkaa">
+      </form>
+    <li style="border-right: none">
+      <form action="/remove/{{ task.id }}" method="post">
+        <input type="submit" value="Poista">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+      </form>
+    </li>
+    {% endif %}
+    <li>
+      <form action="/comment/{{ task.id }}" method="get">
+        <input type="submit" value="Kommentoi">
+      </form>
+  </ul>
+</nav>
+
 {% if comments %}
 <div class="comments">
   <h3>Kommentit:</h3>
@@ -34,13 +59,12 @@
     </li>
     {% endfor %}
   </ul>
-{% if page > 1 %}
-<a href="/task/{{ task.id }}/{{ page - 1 }}">&lt;&lt;</a>
-{% endif %}
-Sivu {{ page }}/{{ page_count }}
-{% if page < page_count %} 
-<a href="/task/{{ task.id }}/{{ page + 1 }}">&gt;&gt;</a>
-{% endif %}
+  {% if page > 1 %}
+  <a href="/task/{{ task.id }}/{{ page - 1 }}">&lt;&lt;</a>
+  {% endif %}
+  Sivu {{ page }}/{{ page_count }}
+  {% if page < page_count %} <a href="/task/{{ task.id }}/{{ page + 1 }}">&gt;&gt;</a>
+    {% endif %}
 </div>
 {% else %}
 <p>Tällä taskilla ei ole vielä kommentteja</p>
