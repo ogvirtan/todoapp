@@ -5,34 +5,33 @@
 {% block content %}
 <h2>Etusivu</h2>
 
-<body>
-  <form action="/search" method="get">
-    <p>
-      Hakusana:
-      {% if query %}
-      <input type="text" name="query" value="{{ query }}" />
-      {% else %}
-      <input type="text" name="query" />
-      {% endif %}
-    </p>
-    <input type="submit" value="Hae" />
-  </form>
-  <div class="todolist">
+<form action="/search" method="get">
+  <p>
+    Hakusana:
+    {% if query %}
+    <input type="text" name="query" value="{{ query }}" />
+    {% else %}
+    <input type="text" name="query" />
+    {% endif %}
+  </p>
+  <input type="submit" value="Hae" />
+</form>
+<div class="todolist">
+  {% if tasks %}
   <h3>Käyttäjien lisäämät taskit</h3>
   <ul>
-  {% for task in tasks %}
+    {% for task in tasks %}
     <li>
-    <a href="/task/{{ task.id }}">{{ task.task }}</a>
+      <a href="/task/{{ task.id }}">{{ task.task }}</a>
     </li>
-  {% endfor %}
+    {% endfor %}
   </ul>
   {% if page > 1 %}
-    <a href="/{{ page - 1 }}">&lt;&lt;</a>
+  <a href="/{{ page - 1 }}">&lt;&lt;</a>
   {% endif %}
-    Sivu {{ page }}/{{ page_count }}
-  {% if page < page_count %}
-    <a href="/{{ page + 1 }}">&gt;&gt;</a>
-  </div>
-  {% endif %}
-</body>
+  Sivu {{ page }}/{{ page_count }}
+  {% if page < page_count %} <a href="/{{ page + 1 }}">&gt;&gt;</a>
+</div>
+{% endif %}
+{% endif %}
 {% endblock %}

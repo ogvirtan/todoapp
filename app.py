@@ -254,6 +254,8 @@ def todolist(page=1):
 @app.route("/userpage/<int:user_id>/<int:task_page>/<int:comment_page>")
 def userpage(user_id, task_page=1, comment_page=1):
     username = forum.get_username(user_id)
+    if not username:
+        abort(404)
 
     task_page_size = 5
     task_count = forum.task_count_by_user(user_id)

@@ -6,11 +6,13 @@ def get_pswdhash(username):
 
 def get_user_id(username):
     sql = "SELECT id FROM users WHERE username = ?"
-    return db.query(sql, [username])[0][0]
+    result = db.query(sql, [username])
+    return result[0][0] if result else None
 
 def get_username(user_id):
     sql = "SELECT username FROM users WHERE id = ?"
-    return db.query(sql, [user_id])[0][0]
+    result= db.query(sql, [user_id])
+    return result[0][0] if result else None
 
 def add_user(username, password_hash):
     sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
@@ -41,7 +43,7 @@ def task_count_all():
 def task_count_by_user(user_id):
     sql = "SELECT COUNT(task) FROM tasks WHERE user_id = ?"
     result = db.query(sql, [user_id])
-    return result[0][0] if result else None
+    return result[0][0] if result else 0
 
 def task_completed_count_by_user(user_id):
     sql = "SELECT COUNT(task) FROM tasks WHERE user_id = ? AND tila = 1"
@@ -95,7 +97,7 @@ def get_comments_by_user(user_id, page, page_size):
 def comment_count(task_id):
     sql = "SELECT COUNT(body) FROM comments WHERE task_id = ?"
     result = db.query(sql, [task_id])
-    return result[0][0] if result else None
+    return result[0][0] if result else 0
 
 def comment_count_by_user(user_id):
     sql = "SELECT COUNT(body) FROM comments WHERE user_id = ?"
