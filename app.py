@@ -7,9 +7,21 @@ import config
 import forum
 import markupsafe
 import math
+import time
+from flask import g
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+@app.before_request
+def before_request():
+    g.start_time = time.time()
+
+@app.after_request
+def after_request(response):
+    elapsed_time = round(time.time() - g.start_time, 2)
+    print("elapsed time:", elapsed_time, "s")
+    return response
 
 @app.route("/")
 @app.route("/<int:page>")
@@ -72,7 +84,7 @@ def login():
             session["username"] = username
             session["user_id"] = forum.get_user_id(username)
             session["csrf_token"] = secrets.token_hex(16)
-            return redirect(next_page)
+            return redirect(next_page) if "/register" not in next_page else redirect("/")
         else:
             flash("VIRHE: väärä tunnus tai salasana")
             filled = {"username": username}
