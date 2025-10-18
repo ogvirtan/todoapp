@@ -21,3 +21,7 @@ sqlite3 database.db < schema.sql
 Sovellus käynnistyy komennolla:
 
 flask run
+
+Tietokannan toimintaa voi halutessaan testata suurella tietomäärällä ajamalla tiedoston seed.py komennolla:
+
+python3 seed.py
