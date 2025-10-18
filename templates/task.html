@@ -37,10 +37,13 @@
       </form>
     </li>
     {% endif %}
+    {% if session.username %}
     <li>
       <form action="/comment/{{ task.id }}" method="get">
         <input type="submit" value="Kommentoi">
       </form>
+      </li>
+    {% endif %}
   </ul>
 </nav>
 
