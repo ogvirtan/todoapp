@@ -5,6 +5,7 @@ Todo-sovelluksessa voi:
 - lisätä, poistaa, muuttaa taskeja
 - merkitä taskeja suoritetuksi
 - suorittaa hakua taskeista otsikon mukaan
+- filtteröidä oman todo-listansa taskien tilan perusteella
 - seurata käyttäjäsivulta käyttäjien lisäämien taskien ja kommenttien lukumäärää
 - kommentoida omia ja muiden taskeja
 
