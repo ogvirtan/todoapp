@@ -17,9 +17,9 @@ for i in range(1, user_count + 1):
 
 for i in range(1, task_count + 1):
     user_id = random.randint(1, user_count)
-    status = random.randint(0,1)
+    status = random.randint(0, 1)
     db.execute("INSERT INTO tasks (tila, task, body, user_id) VALUES (?, ?, ?, ?)",
-               [status,"task" + str(i), "body", user_id])
+               [status, "task" + str(i), "body", user_id])
 
 for i in range(1, message_count + 1):
     user_id = random.randint(1, user_count)
