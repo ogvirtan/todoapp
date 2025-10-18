@@ -17,7 +17,7 @@ def add_user(username, password_hash):
     db.execute(sql, [username, password_hash])
     
 def get_task(task_id):
-    sql = "SELECT id, tila, task, body, user_id FROM tasks WHERE id = ?"
+    sql = "SELECT t.id, t.tila, t.task, t.body, t.user_id, u.username FROM tasks t, users u WHERE t.user_id = u.id AND t.id = ?"
     result = db.query(sql, [task_id])
     return result[0] if result else None
 
@@ -26,6 +26,17 @@ def get_task_by_user(user_id, page, page_size):
     limit = page_size
     offset = page_size * (page - 1)
     return db.query(sql, [user_id, limit, offset])
+
+def get_all_tasks(page, page_size):
+    sql = "SELECT id, task FROM tasks LIMIT ? OFFSET ?"
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [limit, offset])
+
+def task_count_all():
+    sql = "SELECT COUNT(task) FROM tasks"
+    result = db.query(sql)
+    return result[0][0] if result else 0
 
 def task_count_by_user(user_id):
     sql = "SELECT COUNT(task) FROM tasks WHERE user_id = ?"

@@ -3,18 +3,26 @@
 {% block title %}Search{% endblock %}
 
 {% block content %}
-  <h1>todo-list</h1>
+<div class="todolist">
+  <h2>todo-list</h2>
+  <ul>
   {% for task in tasks %}
-  <h3>
+  <li>
     <a href="/task/{{ task.id }}">{{ task.task }}</a>
-  </h3>
+  </li>
   {% endfor %}
+  </ul>
   {% if page > 1 %}
     <a href="/todolist/{{ page - 1 }}">&lt;&lt;</a>
   {% endif %}
+  {% if task_count != 0 %}
     Sivu {{ page }}/{{ page_count }}
+  {% else %}
+  <p>Et ole vielä luonut yhtään taskia. Aloita luomalla taski</p>
+  {% endif %}
   {% if page < page_count %}
     <a href="/todolist/{{ page + 1 }}">&gt;&gt;</a>
   {% endif %}
+</div>
 
 {% endblock %}

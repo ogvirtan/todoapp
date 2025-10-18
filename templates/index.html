@@ -6,6 +6,7 @@
 <h2>Etusivu</h2>
 
 <body>
+  {% if session.username %}
   <form action="/search" method="get">
     <p>
       Hakusana:
@@ -17,5 +18,25 @@
     </p>
     <input type="submit" value="Hae" />
   </form>
+  <div class="todolist">
+  <h3>Käyttäjien lisäämät taskit</h3>
+  <ul>
+  {% for task in tasks %}
+    <li>
+    <a href="/task/{{ task.id }}">{{ task.task }}</a>
+    </li>
+  {% endfor %}
+  </ul>
+  {% if page > 1 %}
+    <a href="/{{ page - 1 }}">&lt;&lt;</a>
+  {% endif %}
+    Sivu {{ page }}/{{ page_count }}
+  {% if page < page_count %}
+    <a href="/{{ page + 1 }}">&gt;&gt;</a>
+  </div>
+  {% endif %}
+  {% else %}
+  <p>Kirjaudu sisään nähdäksesi sivun sisällön</p>
+  {% endif %}
 </body>
 {% endblock %}

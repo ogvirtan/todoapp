@@ -3,8 +3,9 @@
 {% block title %}Task{% endblock %}
 
 {% block content %}
+<div class="todolist">
 <h1>{{ task.task }}</h1>
-<h3>Taskin kuvaus: </h3>
+<h3 style="color:black">Taskin kuvaus: </h3>
 <p> {{ task.body | show_lines }} </p>
 {% if task.tila == 0 %}
 <a href="/markdone/{{ task.id }}">Merkitse tehdyksi</a>
@@ -16,6 +17,8 @@
 <a href="/edit/{{ task.id }}">Muokkaa</a>
 <a href="/remove/{{ task.id }}">Poista</a>
 <a href="/comment/{{ task.id }}">Kommentoi</a>
+<p>Taskin on luonut käyttäjä <a href="/userpage/{{ task.user_id }}">{{task.username}}</a></p>
+</div>
 {% if comments %}
 <div class="comments">
   <h3>Kommentit:</h3>
@@ -31,14 +34,17 @@
     </li>
     {% endfor %}
   </ul>
-</div>
 {% if page > 1 %}
 <a href="/task/{{ task.id }}/{{ page - 1 }}">&lt;&lt;</a>
 {% endif %}
 Sivu {{ page }}/{{ page_count }}
-{% if page < page_count %} <a href="/task/{{ task.id }}/{{ page + 1 }}">&gt;&gt;</a>
-  {% endif %}
-  {% endif %}
-  </body>
+{% if page < page_count %} 
+<a href="/task/{{ task.id }}/{{ page + 1 }}">&gt;&gt;</a>
+{% endif %}
+</div>
+{% else %}
+<p>Tällä taskilla ei ole vielä kommentteja</p>
+{% endif %}
+</body>
 
-  {% endblock %}
+{% endblock %}

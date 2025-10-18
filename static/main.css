@@ -42,8 +42,43 @@ nav li:not(:last-of-type) {
   margin: 0.5em 0;
 }
 
+.stats {
+  font-size: larger;
+}
+
+.todolist {
+  background-color: honeydew;
+  color: black;
+  padding: 1em;
+  margin: 0.5em 0;
+}
+.todolist  ul {
+  font-size: large;
+  padding: 0 1em;
+  margin: 0;
+}
+.todolist h1 {
+  color: darkolivegreen;
+}
+.todolist h2 {
+  color: darkolivegreen;
+}
+.todolist h3 {
+  color: darkolivegreen;
+}
+
+.todolist li {
+  display: grid;
+  padding: 1em;
+  margin: 0;
+}
+
+.todolist li:not(:last-of-type) {
+  border-bottom: 3px solid white;
+}
+
 .comments {
-  background-color: lightgray;
+  background-color: whitesmoke;
   padding: 1em;
   margin: 0.5em 0;
 }  
@@ -64,8 +99,8 @@ nav li:not(:last-of-type) {
 }
 
 .flash{
-  background-color: green;
-  color: white;
+  background-color: orange;
+  color: black;
   padding: 1em;
   margin: 0.5em 0;
 }  

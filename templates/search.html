@@ -16,6 +16,7 @@
 </form>
 {% if query %}
 <hr />
+<div class="todolist">
 <h2>Tulokset</h2>
 <ul>
   {% for result in results %}
@@ -36,4 +37,5 @@
     <a href="/search/{{ page + 1 }}?query={{ query }}">&gt;&gt;</a>
   {% endif %}
 </p>
+</div>
 {% endblock %}

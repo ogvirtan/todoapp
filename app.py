@@ -12,8 +12,20 @@ app = Flask(__name__)
 app.secret_key = config.secret_key
 
 @app.route("/")
-def index():
-    return render_template("index.html")
+@app.route("/<int:page>")
+def index(page=1):
+    page_size = 10
+    task_count = forum.task_count_all()
+    page_count = math.ceil(task_count / page_size)
+    page_count = max(page_count, 1)
+
+    if page < 1:
+        return redirect("/1")
+    if page > page_count:
+        return redirect("/" + str(page_count))
+
+    tasks = forum.get_all_tasks(page, page_size)
+    return render_template("index.html", page=page, page_count=page_count, tasks=tasks)
 
 @app.route("/register", methods=["GET","POST"])
 def register():
@@ -216,7 +228,7 @@ def todolist(page=1):
         return redirect("/todolist/" + str(page_count))
     
     tasks = forum.get_task_by_user(user_id, page, page_size)
-    return render_template("todolist.html",tasks=tasks, page=page, page_count=page_count)
+    return render_template("todolist.html",tasks=tasks, page=page, page_count=page_count, task_count=task_count)
 
 @app.route("/userpage/<int:user_id>")
 @app.route("/userpage/<int:user_id>/<int:task_page>/<int:comment_page>")
@@ -255,11 +267,11 @@ def userpage(user_id, task_page=1, comment_page=1):
     comment_sum = forum.comment_sum_by_user(user_id)
     most_commented_task = forum.most_commented_task(user_id)
     popular_task_com_sum = forum.popular_task_com_sum(user_id)
-    
+
     return render_template("userpage.html", username=username, user_id=user_id, tasks=tasks, task_page=task_page, task_page_count=task_page_count, task_count=task_count, 
-    comments=comments, comment_page=comment_page, comment_page_count=comment_page_count, comment_count=comment_count,
-    task_completed_count=task_completed_count, comment_distinct_user_count=comment_distinct_user_count, comment_distinct_task_count=comment_distinct_task_count, 
-    comment_sum=comment_sum, most_commented_task=most_commented_task, popular_task_com_sum=popular_task_com_sum)
+    comments=comments, comment_page=comment_page, comment_page_count=comment_page_count, comment_count=comment_count, task_completed_count=task_completed_count, 
+    comment_distinct_user_count=comment_distinct_user_count, comment_distinct_task_count=comment_distinct_task_count, comment_sum=comment_sum, 
+    most_commented_task=most_commented_task, popular_task_com_sum=popular_task_com_sum)
 
 @app.template_filter()
 def show_lines(content):

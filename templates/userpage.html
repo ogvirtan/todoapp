@@ -6,6 +6,7 @@
 <h2>Käyttäjän {{ username }} sivu</h2>
 
 <body>
+    <div class="stats">
     {% if task_count != 0 %}
     <p>
         Käyttäjä {{ username }} on luonut {{ task_count }} taskia, joista on merkitty suoritetuksi {{
@@ -28,13 +29,17 @@
         Käyttäjä {{ username }} on kommentoinut yhteensä {{ comment_count }} kertaa. Käyttäjä on kommentoinut {{
         comment_distinct_user_count }} eri käyttäjän taskeja, yhteensä {{ comment_distinct_task_count }} eri taskia
     </p>
+    </div>
     {% if task_count != 0 %}
+    <div class="todolist">
     <h3>Käyttäjän {{ username }} todolist</h3>
+    <ul>
     {% for task in tasks %}
-    <p>
+    <li>
         <a href="/task/{{ task.id }}">{{ task.task }}</a>
-    </p>
+    </li>
     {% endfor %}
+    </ul>
     {% if task_page > 1 %}
     <a href="/userpage/{{ user_id }}/{{ task_page - 1 }}/{{ comment_page }}">&lt;&lt;</a>
     {% endif %}
@@ -42,11 +47,13 @@
     {% if task_page < task_page_count %} 
     <a href="/userpage/{{ user_id }}/{{ task_page + 1 }}/{{ comment_page }}"">&gt;&gt;</a>
     {% endif %}
+    </div>
     {% endif %}
 
+
     {% if comment_count != 0 %}
-    <h3>Käyttäjän {{ username }} kommentit</h3>
     <div class="comments">
+    <h3>Käyttäjän {{ username }} kommentit</h3>
         <ul>
     {% for comment in comments %}
     <li>
@@ -55,15 +62,14 @@
     </li>
     {% endfor %}
     </ul>
-    </div>
     {% if comment_page > 1 %}
     <a href="/userpage/{{ user_id }}/{{ task_page}}/{{ comment_page - 1}}">&lt;&lt;</a>
     {% endif %}
     Sivu {{ comment_page }}/{{ comment_page_count }}
     {% if comment_page < comment_page_count %} 
     <a href="/userpage/{{ user_id }}/{{ task_page }}/{{ comment_page + 1}}"">&gt;&gt;</a>
-    {% endif %}
-    
+    {% endif %}    
+    </div>
     {% endif %}
 </body>
 {% endblock %}
