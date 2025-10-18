@@ -56,26 +56,27 @@ def register():
 @app.route("/login", methods=["GET","POST"])
 def login():
     if request.method == "GET":
-        return render_template("loginform.html", filled={})
+        return render_template("loginform.html", filled={}, next_page=request.referrer)
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        next_page = request.form["next_page"]
         
         password_hash = forum.get_pswdhash(username)
 
         if password_hash == None:
             flash("VIRHE: väärä tunnus tai salasana")
             filled = {"username": username}
-            return render_template("loginform.html", filled=filled)
+            return render_template("loginform.html", filled=filled, next_page=next_page)
         elif check_password_hash(password_hash, password):
             session["username"] = username
             session["user_id"] = forum.get_user_id(username)
             session["csrf_token"] = secrets.token_hex(16)
-            return redirect("/")
+            return redirect(next_page)
         else:
             flash("VIRHE: väärä tunnus tai salasana")
             filled = {"username": username}
-            return render_template("loginform.html", filled=filled)
+            return render_template("loginform.html", filled=filled, next_page=next_page)
 
 @app.route("/logout")
 def logout():

@@ -4,17 +4,20 @@
 
 {% block content %}
 
-<form action="/login" method="post">
-  <p>
-    Tunnus: <br />
-    <input type="text" name="username"  value="{{ filled.username }}" maxlength="100" required />
-  </p>
-  <p>
-    Salasana: <br />
-    <input type="password" name="password" required />
-  </p>
-  <input type="submit" value="Kirjaudu" />
-</form>
-</body>
-
+  <form action="/login" method="post">
+    <p>
+      Tunnus: <br />
+      <input type="text" name="username" value="{{ filled.username }}" maxlength="100" required />
+    </p>
+    <p>
+      Salasana: <br />
+      <input type="password" name="password" required />
+    </p>
+    <input type="submit" value="Kirjaudu" />
+    {% if next_page %}
+    <input type="hidden" name="next_page" value="{{ next_page }}" />
+    {% else %}
+    <input type="hidden" name="next_page" value="/" />
+    {% endif %}
+  </form>
 {% endblock %}
