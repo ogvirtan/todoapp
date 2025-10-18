@@ -46,11 +46,11 @@ def register():
 
     if request.method == "POST":
         username = request.form["username"]
-        if len(username) == 0 or len(username)>40:
-            abort(403)
         password1 = request.form["password1"]
         password2 = request.form["password2"]
         filled = {"username": username}
+        if len(username) == 0 or len(username)>40 or len(password1) == 0 or len(password1)>40:
+            abort(403)
         if password1 != password2:
             flash("VIRHE: salasanat eivät ole samat")
             return render_template("register.html", filled=filled)
