@@ -10,45 +10,46 @@ Todo-sovelluksessa voi:
 - kommentoida omia ja muiden taskeja
 
 
-## käyttöönotto
+## Käyttöönotto
 
-Suorita seuraavat toiminnot alustaaksesi sovelluksen:
+### Suorita seuraavat toiminnot alustaaksesi sovelluksen:
 
 pip install flask
 
 sqlite3 database.db < schema.sql
 
-Luo config.py seuraavasti:
+#### Luo config.py seuraavasti:
 
-Varmista olevasi sovelluksen juurikansiossa todoapp, luo config.py tiedosto komennolla:
+**Varmista olevasi sovelluksen juurikansiossa todoapp, luo config.py tiedosto komennolla:**
 
 touch config.py
 
-Käynnistä python-konsoli komennolla:
+**Käynnistä python-konsoli komennolla:**
 
 python3
 
-Kirjoita python-terminaaliin seuraavat komennot:
+**Kirjoita python-terminaaliin seuraavat komennot:**
 
 import secrets
+
 secrets.token_hex(16)
 
-Kopioi terminaalin antama salainen avain muotoa '39e5b8dd1de7afdc786df2b0cdf7a8f1'
+**Kopioi terminaalin antama salainen avain muotoa '39e5b8dd1de7afdc786df2b0cdf7a8f1'**
 
-poistu python terminaalista komennolla:
+**Poistu python terminaalista komennolla:**
 
 exit()
 
-Kirjoita config.py tiedostoon seuraava koodirivi, johon kopioit oman salaisen avaimesi - rivin kuuluisi näyttää tältä:
+**Kirjoita config.py tiedostoon seuraava koodirivi, johon kopioit oman salaisen avaimesi - rivin kuuluisi näyttää tältä:**
 
 secret_key = '39e5b8dd1de7afdc786df2b0cdf7a8f1'
 
-Tallennettuasi tiedoston olet valmis käynnistämään sovelluksen.
+**Tallennettuasi tiedoston olet valmis käynnistämään sovelluksen.**
 
-Sovellus käynnistyy komennolla:
+#### Sovellus käynnistyy komennolla:
 
 flask run
 
-Tietokannan toimintaa voi halutessaan testata suurella tietomäärällä ajamalla tiedoston seed.py komennolla:
+**Tietokannan toimintaa voi halutessaan testata suurella tietomäärällä ajamalla tiedoston seed.py komennolla:**
 
 python3 seed.py
