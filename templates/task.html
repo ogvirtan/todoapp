@@ -31,7 +31,7 @@
         <input type="submit" value="Muokkaa">
       </form>
     <li style="border-right: none">
-      <form action="/remove/{{ task.id }}" method="post" onsubmit="return confirm('Haluatko varmasti poistaa taskin {{task.task}}')">
+      <form action="/remove/{{ task.id }}" method="post">
         <input type="submit" value="Poista">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
       </form>
