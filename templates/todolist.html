@@ -26,8 +26,6 @@
   {% endif %}
   {% if task_count != 0 %}
   Sivu {{ page }}/{{ page_count }}
-  {% else %}
-  <p>Et ole vielä luonut yhtään taskia. Aloita luomalla taski</p>
   {% endif %}
   {% if page < page_count %} <a href="/todolist/{{ page + 1 }}">&gt;&gt;</a>
     {% endif %}
