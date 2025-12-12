@@ -60,7 +60,7 @@
         Kommentoija: <a href="/userpage/{{ comment.id }}">{{ comment.username }}</a>
       </p>
       <p>
-        {{ comment.body }}
+        {{ comment.body | show_lines}}
       </p>
     </li>
     {% endfor %}
