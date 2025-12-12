@@ -12,6 +12,20 @@
     Taskin sisältö:<br />
     <textarea name="body" rows="5" cols="40" required>{{ task.body }}</textarea>
   </p>
+  <p>
+    Taskin tila: Tehty
+    <input type="radio" name="status" value="1" {% if task.tila==1 %}checked{% endif %} />
+    Kesken
+    <input type="radio" name="status" value="0" {% if task.tila==0 %}checked{% endif %} />
+  </p>
+  <p>Luokittelut:<br />
+    {% for category in categories %}
+    <label>
+      <input type="checkbox" name="category_select" value="{{ category }}" {% if category in filled %}checked{% endif %}>
+      {{ category|capitalize }}
+    </label><br>
+    {% endfor %}
+  </p>
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <input type="submit" value="Lähetä" />
 </form>

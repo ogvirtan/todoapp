@@ -101,20 +101,28 @@ def add_task(task, body, user_id, category_ids=[]):
     return task_id
 
 
-def update_task(task, body, task_id):
+def update_task(task, body, task_id, category_ids=[]):
     sql = "UPDATE tasks SET (task, body) = (?, ?) WHERE id = ?"
     db.execute(sql, [task, body, task_id])
 
+    sql_delete = "DELETE FROM task_categories WHERE task_id = ?"
+    db.execute(sql_delete, [task_id])
 
-def mark_task_done(task_id):
+    if category_ids:
+        rows = [(task_id, cid) for cid in category_ids]
+        db.execute_many("INSERT INTO task_categories (task_id, category_id) VALUES (?, ?)", rows)
+
+def set_task_status(task_id, tila):
     sql = "UPDATE tasks SET tila = ? WHERE id = ?"
-    db.execute(sql, [1, task_id])
+    db.execute(sql, [tila, task_id])
 
 
 def remove_task(task_id):
     sql = "DELETE FROM comments WHERE task_id = ?"
     db.execute(sql, [task_id])
     sql = "DELETE FROM tasks WHERE id = ?"
+    db.execute(sql, [task_id])
+    sql = "DELETE FROM task_categories WHERE task_id = ?"
     db.execute(sql, [task_id])
 
 def add_category(title, user_id):

@@ -186,17 +186,23 @@ def edit_task(task_id):
     if task["user_id"] != user_id:
         abort(403)
 
+    categories = forum.get_categories_by_user(user_id)
+    filled = forum.get_categories_by_task(task_id)
     if request.method == "GET":
-        return render_template("edit.html", task=task)
+        return render_template("edit.html", task=task, categories=categories, filled=filled)
 
     if request.method == "POST":
         check_csrf()
         title = request.form["task"]
         body = request.form["body"]
+        cat_selection = request.form.getlist("category_select")
+        status = int(request.form["status"])
+        category_ids = forum.get_category_ids(cat_selection, user_id)
         if len(body) == 0 or len(title) == 0 or len(title) > 40:
             abort(403)
         try:
-            forum.update_task(title, body, task["id"])
+            forum.update_task(title, body, task_id, category_ids)
+            forum.set_task_status(task_id, status)
         except sqlite3.IntegrityError:
             flash("VIRHE: taskia ei ole olemassa")
             return redirect("/")
@@ -232,7 +238,7 @@ def mark_done(task_id):
     if task["user_id"] != user_id:
         abort(403)
     try:
-        forum.mark_task_done(task["id"])
+        forum.set_task_status(task_id, 1)
     except sqlite3.IntegrityError:
         flash("VIRHE: taskia ei ole olemassa")
         return redirect("/")
