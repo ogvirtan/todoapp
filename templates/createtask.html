@@ -4,29 +4,23 @@
 
 {% block content %}
 <h1>Luo uusi taski todo-listalle</h1>
-<form action="/createtask" method="get">
-  <label>
-    <input type="checkbox" name="status" value="on" {% if status=="on" %}checked{% endif %}>
-    Uusi luokittelu
-  </label>
-  <input type="submit" value="Päivitä" />
+<form action="/createtask" method="post">
+  <p>Uusi luokittelu:
+    <input type="text" name="category_new" maxlength="40" required>
+    <input type="submit" value="Lisää">
+  </p>
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+  
 </form>
 <form action="/addnewtask" method="post">
-  {% if status == "off" %}
-  <p>Luokittelu
-    <select name="category_select">
-      {% for category in categories %}
-      <option value="{{ category }}">
-        {{ category|capitalize }}
-      </option>
-      {% endfor %}
-    </select>
+  <p>Luokittelut:<br />
+    {% for category in categories %}
+    <label>
+      <input type="checkbox" name="category_select" value="{{ category }}">
+      {{ category|capitalize }}
+    </label><br>
+    {% endfor %}
   </p>
-  {% elif status == "on" %}
-  <p>Luokittelu
-    <input type="text" name="category_new" maxlength="40" />
-  </p>
-  {% endif %}
   <p>
     Taskin otsikko: <br />
     <input type="text" name="task" maxlength="40" required />

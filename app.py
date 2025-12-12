@@ -108,10 +108,12 @@ def logout():
 def create_task():
     require_login()
     categories = forum.get_categories_by_user(session["user_id"])
-    status = request.args.get("status", "off")
     if request.method == "POST":
         check_csrf()
-    return render_template("createtask.html", categories=categories, status=status)
+        new_category = request.form["category_new"]
+        forum.add_category(new_category, session["user_id"])
+        categories = forum.get_categories_by_user(session["user_id"])
+    return render_template("createtask.html", categories=categories)
 
 
 @app.route("/addnewtask", methods=["POST"])
@@ -119,18 +121,14 @@ def add_new_task():
     require_login()
     task = request.form["task"]
     body = request.form["body"]
-    category = request.form.get("category_select") or request.form.get("category_new")
+    category_selection = request.form.getlist("category_select")
     user_id = session["user_id"]
+
     if len(task) == 0 or len(task) > 40 or len(body) == 0:
         abort(403)
 
-    category_id = forum.get_category_id(category, user_id)
-    if category != "-":
-        if category_id == None:
-            forum.add_category(category, user_id)
-            category_id = forum.get_category_id(category, user_id)
-    forum.add_task(task, body, user_id, category_id)
-    task_id = db.last_insert_id()
+    category_ids = forum.get_category_ids(category_selection, user_id)
+    task_id = forum.add_task(task, body, user_id, category_ids)
     return redirect("/task/" + str(task_id))
 
 
@@ -147,10 +145,10 @@ def show_task(task_id, page=1):
         return redirect("/task/<int:task_id>/" + str(page_count))
     task = forum.get_task(task_id)
     comments = forum.get_comments(task_id, page, page_size)
-    category = forum.get_category_by_task(task_id)
+    categories = forum.get_categories_by_task(task_id)
     if not task:
         abort(404)
-    return render_template("task.html", task=task, comments=comments, category=category, page=page, page_count=page_count)
+    return render_template("task.html", task=task, comments=comments, categories=categories, page=page, page_count=page_count)
 
 
 @app.route("/comment/<int:task_id>", methods=["GET", "POST"])

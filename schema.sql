@@ -9,7 +9,6 @@ CREATE TABLE tasks (
     tila BOOLEAN,
     task TEXT,
     body TEXT,
-    category_id INTEGER REFERENCES categories,
     user_id INTEGER REFERENCES users
 );
 
@@ -20,6 +19,12 @@ CREATE TABLE categories (
     title TEXT,
     user_id INTEGER REFERENCES users,
     UNIQUE (user_id, title)
+);
+
+CREATE TABLE task_categories (
+    task_id INTEGER REFERENCES tasks,
+    category_id INTEGER REFERENCES categories,
+    PRIMARY KEY (task_id, category_id)
 );
 
 CREATE TABLE comments (
