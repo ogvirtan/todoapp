@@ -89,9 +89,9 @@ def comment_distinct_user_count(user_id):
     return result[0][0] if result else 0
 
 
-def add_task(task, body, user_id):
-    sql = "INSERT INTO tasks (tila, task, body, user_id) VALUES (?, ?, ?, ?)"
-    db.execute(sql, [0, task, body, user_id])
+def add_task(task, body, user_id, category_id=None):
+    sql = "INSERT INTO tasks (tila, task, body, user_id, category_id) VALUES (?, ?, ?, ?, ?)"
+    db.execute(sql, [0, task, body, user_id, category_id])
 
 
 def update_task(task, body, task_id):
@@ -110,6 +110,25 @@ def remove_task(task_id):
     sql = "DELETE FROM tasks WHERE id = ?"
     db.execute(sql, [task_id])
 
+def add_category(title, user_id):
+    sql = "INSERT INTO categories (title, user_id) VALUES (?, ?)"
+    db.execute(sql, [title, user_id])
+
+def get_categories_by_user(user_id):
+    sql = "SELECT title FROM categories WHERE user_id = ?"
+    titles = db.query(sql, [user_id])
+    categories = [row[0] for row in titles]
+    return categories if categories else ["-"]
+
+def get_category_by_task(task_id):
+    sql = "SELECT c.title FROM categories c JOIN tasks t ON c.id = t.category_id WHERE t.id = ?"
+    result = db.query(sql, [task_id])
+    return result[0][0] if result else None
+
+def get_category_id(title, user_id):
+    sql = "SELECT id FROM categories WHERE title = ? AND user_id = ?"
+    result = db.query(sql, [title, user_id])
+    return result[0][0] if result else None
 
 def add_comment(comment, task_id, user_id):
     sql = "INSERT INTO comments (body, task_id, user_id) VALUES (?, ?, ?)"

@@ -3,20 +3,39 @@
 {% block title %}New task{% endblock %}
 
 {% block content %}
-
-<body>
-  <h1>Luo uusi taski todo-listalle</h1>
-  <form action="/addnewtask" method="post">
-    <p>
-      Taskin otsikko: <br />
-      <input type="text" name="task" maxlength="40" required />
-    </p>
-    <p>
-      Taskin sisältö: <br />
-      <textarea name="body" rows="5" cols="40" required></textarea>
-    </p>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="submit" value="Lisää tehtävälistalle" />
-  </form>
-</body>
+<h1>Luo uusi taski todo-listalle</h1>
+<form action="/createtask" method="get">
+  <label>
+    <input type="checkbox" name="status" value="on" {% if status=="on" %}checked{% endif %}>
+    Uusi luokittelu
+  </label>
+  <input type="submit" value="Päivitä" />
+</form>
+<form action="/addnewtask" method="post">
+  {% if status == "off" %}
+  <p>Luokittelu
+    <select name="category_select">
+      {% for category in categories %}
+      <option value="{{ category }}">
+        {{ category|capitalize }}
+      </option>
+      {% endfor %}
+    </select>
+  </p>
+  {% elif status == "on" %}
+  <p>Luokittelu
+    <input type="text" name="category_new" maxlength="40" />
+  </p>
+  {% endif %}
+  <p>
+    Taskin otsikko: <br />
+    <input type="text" name="task" maxlength="40" required />
+  </p>
+  <p>
+    Taskin sisältö: <br />
+    <textarea name="body" rows="5" cols="40" required></textarea>
+  </p>
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  <input type="submit" value="Lisää tehtävälistalle" />
+</form>
 {% endblock %}

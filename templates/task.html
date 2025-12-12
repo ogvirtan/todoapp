@@ -6,6 +6,7 @@
 <div class="todolist" style="margin-bottom: 0">
   <h1>{{ task.task }}</h1>
   <h3 style="color:black">Taskin kuvaus: </h3>
+  <h4>Kategoria: {{ category | default('-') }}</h4>
   <p> {{ task.body | show_lines }} </p>
   <hr>
   {% if task.tila == 1 %}
@@ -42,7 +43,7 @@
       <form action="/comment/{{ task.id }}" method="get">
         <input type="submit" value="Kommentoi">
       </form>
-      </li>
+    </li>
     {% endif %}
   </ul>
 </nav>
