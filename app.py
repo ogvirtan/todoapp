@@ -111,15 +111,19 @@ def logout():
 def create_task():
     require_login()
     category_list = categories.get_categories_by_user(session["user_id"])
-    if request.method == "POST":
-        check_csrf()
-        new_category = request.form["category_new"]
-        try:
-            categories.add_category(new_category, session["user_id"])
-        except sqlite3.IntegrityError:
-            flash("VIRHE: kategorian tulee olla uniikki")
-        category_list = categories.get_categories_by_user(session["user_id"])
     return render_template("createtask.html", categories=category_list)
+
+@app.route("/createcategory", methods=["POST"])
+def create_category():
+    require_login()
+    check_csrf()
+    new_category = request.form["category_new"]
+    next_page = request.form["next_page"]
+    try:
+        categories.add_category(new_category, session["user_id"])
+    except sqlite3.IntegrityError:
+        flash("VIRHE: kategorian tulee olla uniikki")
+    return redirect(next_page)
 
 
 @app.route("/addnewtask", methods=["POST"])
@@ -192,10 +196,10 @@ def edit_task(task_id):
     if task["user_id"] != user_id:
         abort(403)
 
-    category_list = categories.get_categories_by_user(user_id)
-    filled = categories.get_categories_by_task(task_id)
     if request.method == "GET":
-        return render_template("edit.html", task=task, categories=category_list, filled=filled)
+        category_list = categories.get_categories_by_user(user_id)
+        checked = categories.get_categories_by_task(task_id)
+        return render_template("edit.html", task=task, categories=category_list, checked=checked)
 
     if request.method == "POST":
         check_csrf()

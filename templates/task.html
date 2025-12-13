@@ -11,7 +11,7 @@
   </h4>
   <p> {{ task.body | show_lines }} </p>
   <hr>
-  {% if task.tila == 1 %}
+  {% if task.task_status == 1 %}
   <p>Taski suoritettu</p>
   {% endif %}
   {% if session.user_id != task.user_id %}
@@ -21,7 +21,7 @@
 <nav class="nav" style="background-color:honeydew; margin-top: 0; text-align: left">
   <ul>
     {% if session.user_id == task.user_id %}
-    {% if task.tila == 0 %}
+    {% if task.task_status == 0 %}
     <li style="border-right: none">
       <form action="/markdone/{{ task.id }}" method="post">
         <input type="submit" value="Merkitse tehdyksi">

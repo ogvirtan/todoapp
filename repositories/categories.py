@@ -8,12 +8,12 @@ def get_categories_by_user(user_id):
     sql = "SELECT title FROM categories WHERE user_id = ?"
     titles = db.query(sql, [user_id])
     categories = [row[0] for row in titles]
-    return categories if categories else ["-"]
+    return categories if categories else []
 
 def get_categories_by_task(task_id):
     sql = "SELECT c.title FROM categories c JOIN task_categories tc ON c.id = tc.category_id WHERE tc.task_id = ?"
     result = db.query(sql, [task_id])
-    return [row[0] for row in result] if result else ["-"]
+    return [row[0] for row in result] if result else []
 
 def get_category_ids(titles, user_id):
     if not titles:

@@ -13,13 +13,13 @@ def task_count_by_user(user_id):
 
 
 def task_count_by_user_and_status(user_id, status):
-    sql = "SELECT COUNT(task) FROM tasks WHERE user_id = ? AND tila = ?"
+    sql = "SELECT COUNT(task) FROM tasks WHERE user_id = ? AND task_status = ?"
     result = db.query(sql, [user_id, status])
     return result[0][0] if result else 0
 
 
 def task_completed_count_by_user(user_id):
-    sql = "SELECT COUNT(task) FROM tasks WHERE user_id = ? AND tila = 1"
+    sql = "SELECT COUNT(task) FROM tasks WHERE user_id = ? AND task_status = 1"
     result = db.query(sql, [user_id])
     return result[0][0] if result else 0
 

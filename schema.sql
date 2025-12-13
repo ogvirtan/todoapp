@@ -6,7 +6,7 @@ CREATE TABLE users (
 
 CREATE TABLE tasks (
     id INTEGER PRIMARY KEY,
-    tila BOOLEAN,
+    task_status BOOLEAN,
     task TEXT,
     body TEXT,
     user_id INTEGER REFERENCES users

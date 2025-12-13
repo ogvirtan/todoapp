@@ -4,15 +4,16 @@
 
 {% block content %}
 <h1>Luo uusi taski todo-listalle</h1>
-<form action="/createtask" method="post">
+<form action="/createcategory" method="post">
   <p>Uusi luokittelu:
     <input type="text" name="category_new" maxlength="40" required>
     <input type="submit" value="Lisää">
   </p>
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-  
+  <input type="hidden" name="next_page" value="{{ request.path }}">
 </form>
 <form action="/addnewtask" method="post">
+  {% if categories %}
   <p>Luokittelut:<br />
     {% for category in categories %}
     <label>
@@ -20,6 +21,9 @@
       {{ category|capitalize }}
     </label><br>
     {% endfor %}
+    {% else %}
+  <p>Käyttäjällesi ei ole vielä lisätty luokitteluja <br />
+    {% endif %}
   </p>
   <p>
     Taskin otsikko: <br />
