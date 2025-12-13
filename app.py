@@ -6,7 +6,7 @@ from flask import Flask, render_template, redirect, request, session, flash, abo
 from werkzeug.security import generate_password_hash, check_password_hash, secrets
 from . import db
 from . import config
-from . import forum
+from .repositories import tasks, users, comments, categories, stats
 
 
 app = Flask(__name__)
@@ -29,7 +29,7 @@ def after_request(response):
 @app.route("/<int:page>")
 def index(page=1):
     page_size = 10
-    task_count = forum.task_count_all()
+    task_count = stats.task_count_all()
     page_count = math.ceil(task_count / page_size)
     page_count = max(page_count, 1)
 
@@ -38,8 +38,8 @@ def index(page=1):
     if page > page_count:
         return redirect("/" + str(page_count))
 
-    tasks = forum.get_all_tasks(page, page_size)
-    return render_template("index.html", page=page, page_count=page_count, tasks=tasks)
+    all_tasks = tasks.get_all_tasks(page, page_size)
+    return render_template("index.html", page=page, page_count=page_count, tasks=all_tasks)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -60,7 +60,7 @@ def register():
         password_hash = generate_password_hash(password1)
 
         try:
-            forum.add_user(username, password_hash)
+            users.add_user(username, password_hash)
         except sqlite3.IntegrityError:
             flash("VIRHE: tunnus on jo varattu")
             return render_template("register.html", filled=filled)
@@ -81,7 +81,7 @@ def login():
         password = request.form["password"]
         next_page = request.form["next_page"]
 
-        password_hash = forum.get_pswdhash(username)
+        password_hash = users.get_pswdhash(username)
 
         if password_hash is None:
             flash("VIRHE: väärä tunnus tai salasana")
@@ -89,7 +89,7 @@ def login():
             return render_template("loginform.html", filled=filled, next_page=next_page)
         if check_password_hash(password_hash, password):
             session["username"] = username
-            session["user_id"] = forum.get_user_id(username)
+            session["user_id"] = users.get_user_id(username)
             session["csrf_token"] = secrets.token_hex(16)
             return redirect(next_page) if "/register" not in next_page else redirect("/")
             
@@ -110,16 +110,16 @@ def logout():
 @app.route("/createtask", methods=["GET", "POST"])
 def create_task():
     require_login()
-    categories = forum.get_categories_by_user(session["user_id"])
+    category_list = categories.get_categories_by_user(session["user_id"])
     if request.method == "POST":
         check_csrf()
         new_category = request.form["category_new"]
         try:
-            forum.add_category(new_category, session["user_id"])
+            categories.add_category(new_category, session["user_id"])
         except sqlite3.IntegrityError:
             flash("VIRHE: kategorian tulee olla uniikki")
-        categories = forum.get_categories_by_user(session["user_id"])
-    return render_template("createtask.html", categories=categories)
+        category_list = categories.get_categories_by_user(session["user_id"])
+    return render_template("createtask.html", categories=category_list)
 
 
 @app.route("/addnewtask", methods=["POST"])
@@ -133,8 +133,8 @@ def add_new_task():
     if len(task) == 0 or len(task) > 40 or len(body) == 0:
         abort(403)
 
-    category_ids = forum.get_category_ids(category_selection, user_id)
-    task_id = forum.add_task(task, body, user_id, category_ids)
+    category_ids = categories.get_category_ids(category_selection, user_id)
+    task_id = tasks.add_task(task, body, user_id, category_ids)
     return redirect("/task/" + str(task_id))
 
 
@@ -142,25 +142,25 @@ def add_new_task():
 @app.route("/task/<int:task_id>/<int:page>")
 def show_task(task_id, page=1):
     page_size = 10
-    comment_count = forum.comment_count(task_id)
+    comment_count = stats.comment_count(task_id)
     page_count = math.ceil(comment_count / page_size)
     page_count = max(page_count, 1)
     if page < 1:
         return redirect("/task/<int:task_id>/1")
     if page > page_count:
         return redirect("/task/<int:task_id>/" + str(page_count))
-    task = forum.get_task(task_id)
-    comments = forum.get_comments(task_id, page, page_size)
-    categories = forum.get_categories_by_task(task_id)
+    task = tasks.get_task(task_id)
+    com = comments.get_comments(task_id, page, page_size)
+    category_list = categories.get_categories_by_task(task_id)
     if not task:
         abort(404)
-    return render_template("task.html", task=task, comments=comments, categories=categories, page=page, page_count=page_count)
+    return render_template("task.html", task=task, comments=com, categories=category_list, page=page, page_count=page_count)
 
 
 @app.route("/comment/<int:task_id>", methods=["GET", "POST"])
 def comment_task(task_id):
     require_login()
-    task = forum.get_task(task_id)
+    task = tasks.get_task(task_id)
     if not task:
         abort(404)
     user_id = session["user_id"]
@@ -174,7 +174,7 @@ def comment_task(task_id):
         if not comment:
             abort(403)
         try:
-            forum.add_comment(comment, task["id"], user_id)
+            comments.add_comment(comment, task["id"], user_id)
         except sqlite3.IntegrityError:
             flash("VIRHE: taskia ei ole olemassa")
             return redirect("/")
@@ -185,17 +185,17 @@ def comment_task(task_id):
 @app.route("/edit/<int:task_id>", methods=["GET", "POST"])
 def edit_task(task_id):
     require_login()
-    task = forum.get_task(task_id)
+    task = tasks.get_task(task_id)
     if not task:
         abort(404)
     user_id = session["user_id"]
     if task["user_id"] != user_id:
         abort(403)
 
-    categories = forum.get_categories_by_user(user_id)
-    filled = forum.get_categories_by_task(task_id)
+    category_list = categories.get_categories_by_user(user_id)
+    filled = categories.get_categories_by_task(task_id)
     if request.method == "GET":
-        return render_template("edit.html", task=task, categories=categories, filled=filled)
+        return render_template("edit.html", task=task, categories=category_list, filled=filled)
 
     if request.method == "POST":
         check_csrf()
@@ -203,12 +203,12 @@ def edit_task(task_id):
         body = request.form["body"]
         cat_selection = request.form.getlist("category_select")
         status = int(request.form["status"])
-        category_ids = forum.get_category_ids(cat_selection, user_id)
+        category_ids = categories.get_category_ids(cat_selection, user_id)
         if len(body) == 0 or len(title) == 0 or len(title) > 40:
             abort(403)
         try:
-            forum.update_task(title, body, task_id, category_ids)
-            forum.set_task_status(task_id, status)
+            tasks.update_task(title, body, task_id, category_ids)
+            tasks.set_task_status(task_id, status)
         except sqlite3.IntegrityError:
             flash("VIRHE: taskia ei ole olemassa")
             return redirect("/")
@@ -219,14 +219,14 @@ def edit_task(task_id):
 def remove_task(task_id):
     require_login()
     check_csrf()
-    task = forum.get_task(task_id)
+    task = tasks.get_task(task_id)
     if not task:
         abort(404)
     user_id = session["user_id"]
     if task["user_id"] != user_id:
         abort(403)
     try:
-        forum.remove_task(task["id"])
+        tasks.remove_task(task["id"])
     except sqlite3.IntegrityError:
         flash("VIRHE: taskia ei ole olemassa")
         return redirect("/")
@@ -237,14 +237,14 @@ def remove_task(task_id):
 def mark_done(task_id):
     require_login()
     check_csrf()
-    task = forum.get_task(task_id)
+    task = tasks.get_task(task_id)
     if not task:
         abort(404)
     user_id = session["user_id"]
     if task["user_id"] != user_id:
         abort(403)
     try:
-        forum.set_task_status(task_id, 1)
+        tasks.set_task_status(task_id, 1)
     except sqlite3.IntegrityError:
         flash("VIRHE: taskia ei ole olemassa")
         return redirect("/")
@@ -256,8 +256,8 @@ def mark_done(task_id):
 def search(page=1):
     query = request.args.get("query")
     page_size = 10
-    results = forum.search(query, page, page_size) if query else []
-    search_count = forum.search_count(query) if query else 0
+    results = tasks.search(query, page, page_size) if query else []
+    search_count = tasks.search_count(query) if query else 0
     page_count = math.ceil(search_count / page_size)
     page_count = max(page_count, 1)
 
@@ -277,44 +277,44 @@ def todolist(page=1):
     status = int(request.args.get("status", 2))
 
     if status == 1 or status == 0:
-        task_count = forum.task_count_by_user_and_status(user_id, status)
+        task_count = stats.task_count_by_user_and_status(user_id, status)
         page_count = math.ceil(task_count / page_size)
         page_count = max(page_count, 1)
-        tasks = forum.get_task_by_user_and_status(
+        user_tasks = tasks.get_tasks_by_user_and_status(
             user_id, status, page, page_size)
     else:
-        task_count = forum.task_count_by_user(user_id)
+        task_count = stats.task_count_by_user(user_id)
         page_count = math.ceil(task_count / page_size)
         page_count = max(page_count, 1)
-        tasks = forum.get_task_by_user(user_id, page, page_size)
+        user_tasks = tasks.get_tasks_by_user(user_id, page, page_size)
 
     if page < 1:
         return redirect("/todolist/" + "/1")
     if page > page_count:
         return redirect("/todolist/" + str(page_count))
 
-    return render_template("todolist.html", tasks=tasks, status=status, page=page, 
+    return render_template("todolist.html", tasks=user_tasks, status=status, page=page, 
                             page_count=page_count, task_count=task_count)
 
 
 @app.route("/userpage/<int:user_id>")
 @app.route("/userpage/<int:user_id>/<int:task_page>/<int:comment_page>")
 def userpage(user_id, task_page=1, comment_page=1):
-    username = forum.get_username(user_id)
+    username = users.get_username(user_id)
     if not username:
         abort(404)
 
     task_page_size = 5
-    task_count = forum.task_count_by_user(user_id)
+    task_count = stats.task_count_by_user(user_id)
     task_page_count = math.ceil(task_count / task_page_size)
     task_page_count = max(task_page_count, 1)
-    tasks = forum.get_task_by_user(user_id, task_page, task_page_size)
+    user_tasks = tasks.get_tasks_by_user(user_id, task_page, task_page_size)
 
     comment_page_size = 5
-    comment_count = forum.comment_count_by_user(user_id)
+    comment_count = stats.comment_count_by_user(user_id)
     comment_page_count = math.ceil(comment_count / comment_page_size)
     comment_page_count = max(comment_page_count, 1)
-    comments = forum.get_comments_by_user(
+    com = comments.get_comments_by_user(
         user_id, comment_page, comment_page_size)
 
     if task_page < 1:
@@ -327,18 +327,18 @@ def userpage(user_id, task_page=1, comment_page=1):
     if comment_page > comment_page_count:
         return redirect("/todolist/" + str(task_page_count) + "/" + str(comment_page_count))
 
-    task_count = forum.task_count_by_user(user_id)
-    task_completed_count = forum.task_completed_count_by_user(user_id)
-    comment_count = forum.comment_count_by_user(user_id)
-    comment_distinct_user_count = forum.comment_distinct_user_count(user_id)
-    comment_distinct_task_count = forum.comment_distinct_task_count(user_id)
-    comment_sum = forum.comment_sum_by_user(user_id)
-    most_commented_task = forum.most_commented_task(user_id)
-    popular_task_com_sum = forum.popular_task_com_sum(user_id)
+    task_count = stats.task_count_by_user(user_id)
+    task_completed_count = stats.task_completed_count_by_user(user_id)
+    comment_count = stats.comment_count_by_user(user_id)
+    comment_distinct_user_count = stats.comment_distinct_user_count(user_id)
+    comment_distinct_task_count = stats.comment_distinct_task_count(user_id)
+    comment_sum = stats.comment_sum_by_user(user_id)
+    most_commented_task = stats.most_commented_task(user_id)
+    popular_task_com_sum = stats.popular_task_com_sum(user_id)
 
-    return render_template("userpage.html", username=username, user_id=user_id, tasks=tasks, 
+    return render_template("userpage.html", username=username, user_id=user_id, tasks=user_tasks, 
                         task_page=task_page, task_page_count=task_page_count, task_count=task_count,
-                        comments=comments, comment_page=comment_page, comment_page_count=comment_page_count, 
+                        comments=com, comment_page=comment_page, comment_page_count=comment_page_count, 
                         comment_count=comment_count, task_completed_count=task_completed_count,
                         comment_distinct_user_count=comment_distinct_user_count, 
                         comment_distinct_task_count=comment_distinct_task_count, comment_sum=comment_sum,
