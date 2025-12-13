@@ -61,9 +61,9 @@ def set_task_status(task_id, status):
 def remove_task(task_id):
     sql = "DELETE FROM comments WHERE task_id = ?"
     db.execute(sql, [task_id])
-    sql = "DELETE FROM tasks WHERE id = ?"
-    db.execute(sql, [task_id])
     sql = "DELETE FROM task_categories WHERE task_id = ?"
+    db.execute(sql, [task_id])
+    sql = "DELETE FROM tasks WHERE id = ?"
     db.execute(sql, [task_id])
 
 def search(query, page, page_size):
