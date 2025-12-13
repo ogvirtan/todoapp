@@ -71,6 +71,9 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if "username" in session:
+        return redirect("/")
+        
     if request.method == "GET":
         return render_template("loginform.html", filled={}, next_page=request.referrer)
     if request.method == "POST":
@@ -111,7 +114,10 @@ def create_task():
     if request.method == "POST":
         check_csrf()
         new_category = request.form["category_new"]
-        forum.add_category(new_category, session["user_id"])
+        try:
+            forum.add_category(new_category, session["user_id"])
+        except sqlite3.IntegrityError:
+            flash("VIRHE: kategorian tulee olla uniikki")
         categories = forum.get_categories_by_user(session["user_id"])
     return render_template("createtask.html", categories=categories)
 
