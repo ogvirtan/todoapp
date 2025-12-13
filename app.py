@@ -119,16 +119,22 @@ def create_category():
     check_csrf()
     new_category = request.form["category_new"]
     next_page = request.form["next_page"]
+
+    if not new_category.strip():
+        flash("VIRHE: luokittelu ei voi olla tyhjä")
+        return redirect(next_page)
+
     try:
         categories.add_category(new_category, session["user_id"])
     except sqlite3.IntegrityError:
-        flash("VIRHE: kategorian tulee olla uniikki")
+        flash("VIRHE: luokittelun tulee olla uniikki")
     return redirect(next_page)
 
 
 @app.route("/addnewtask", methods=["POST"])
 def add_new_task():
     require_login()
+    check_csrf()
     task = request.form["task"]
     body = request.form["body"]
     category_selection = request.form.getlist("category_select")
