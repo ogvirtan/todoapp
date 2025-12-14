@@ -10,6 +10,11 @@ def get_categories_by_user(user_id):
     categories = [row[0] for row in titles]
     return categories if categories else []
 
+def get_category_by_title_and_user(title , user_id):
+    sql = "SELECT title FROM categories WHERE title = ? AND user_id = ?"
+    result = db.query(sql, [title, user_id])
+    return result[0][0] if result else None
+
 def get_categories_by_task(task_id):
     sql = "SELECT c.title FROM categories c JOIN task_categories tc ON c.id = tc.category_id WHERE tc.task_id = ?"
     result = db.query(sql, [task_id])
