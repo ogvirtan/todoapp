@@ -18,7 +18,7 @@
     {% for category in categories %}
     <label>
       <input type="checkbox" name="category_select" value="{{ category }}" {% if category in checked %}checked{% endif %}>
-      {{ category|capitalize }}
+      {{ category }}
     </label><br>
     {% endfor %}
     {% else %}

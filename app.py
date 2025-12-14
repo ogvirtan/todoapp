@@ -124,10 +124,12 @@ def create_category():
         flash("VIRHE: luokittelu ei voi olla tyhjä")
         return redirect(next_page)
 
-    try:
-        categories.add_category(new_category, session["user_id"])
-    except sqlite3.IntegrityError:
+    existing = categories.get_category_by_title_and_user(new_category, session["user_id"])
+    if existing:
         flash("VIRHE: luokittelun tulee olla uniikki")
+        return redirect(next_page)
+
+    categories.add_category(new_category, session["user_id"])
     return redirect(next_page)
 
 
