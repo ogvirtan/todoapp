@@ -107,7 +107,7 @@ def logout():
     return redirect("/")
 
 
-@app.route("/createtask", methods=["GET", "POST"])
+@app.route("/createtask", methods=["GET"])
 def create_task():
     require_login()
     category_list = categories.get_categories_by_user(session["user_id"])
