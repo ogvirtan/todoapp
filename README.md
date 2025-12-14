@@ -16,7 +16,8 @@ Todo-sovelluksessa voi:
 ### Suorita seuraavat toiminnot alustaaksesi sovelluksen:
 ```bash
 pip install flask
-
+```
+```bash
 sqlite3 database.db < schema.sql
 ```
 
@@ -36,7 +37,8 @@ python3
 
 ```python
 import secrets
-
+```
+```python
 secrets.token_hex(16)
 ```
 
